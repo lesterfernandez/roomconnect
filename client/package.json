@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "prettier . -w && eslint .",
+    "preview": "vite preview",
+    "prepare": "cd .. && husky install client/.husky"
   },
   "dependencies": {
     "@eslint/js": "^8.50.0",

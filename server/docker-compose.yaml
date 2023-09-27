@@ -1,0 +1,39 @@
+services:
+  
+  db:
+    container_name: docker-rmf-db
+    image: postgres
+    restart: unless-stopped
+    environment:
+      # read from env_file
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    env_file:
+      - .env 
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/seeding.sql:/docker-entrypoint-initdb.d/seeding.sql
+      # - ./db/pgdata:/var/lib/postgresql/data # here all the db data from our container will be persisted
+    ports:
+      - '5001:5432'
+    healthcheck:
+      test: ['CMD-SHELL pg_isready -U $POSTGRES_USER -d $POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+ 
+  cache:
+    container_name: docker-rmf-cache
+    image: redis
+    depends_on:
+      - db
+    ports:
+      - '5002:6379'
+    restart: unless-stopped
+
+  # connection string for Postgres (with template values):
+  # postgresql://postgres@localhost:5001/rmf-db1
+
+  # connection string for Redis:
+  # 127.0.0.1 port: 5002

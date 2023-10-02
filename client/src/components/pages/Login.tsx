@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../../../store";
+import { useAuthStore } from "../../../store";
 
 const Login = () => {
-  const login = useStore((state) => state.signIn);
+  const login = useAuthStore((state) => state.signIn);
   const navigate = useNavigate();
 
   const handleSubmit = () => {

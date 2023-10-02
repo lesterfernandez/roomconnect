@@ -10,7 +10,7 @@ type AccountActions = {
     signOut: () => void
 }
 
-export const useStore = create<UserProfile & AccountActions>((set) => ({
+export const useAuthStore = create<UserProfile & AccountActions>((set) => ({
     username: "",
     loggedIn: false,
 

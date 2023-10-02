@@ -1,6 +1,17 @@
 package data
 
-var users []*RegisterBody
+import (
+	"github.com/golang-jwt/jwt"
+)
+
+var Users []*RegisterBody
+
+var jwtKey = []byte("secret")
+
+type Claims struct {
+	Username string
+	jwt.StandardClaims
+}
 
 type RegisterBody struct {
 	profilePic  string
@@ -25,7 +36,7 @@ type ApiError struct {
 }
 
 func UserExists(username string) bool {
-	for _, v := range users {
+	for _, v := range Users {
 		if v.Username == username {
 			return true
 		}

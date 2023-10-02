@@ -6,7 +6,7 @@ import (
 
 var Users []*RegisterBody
 
-var jwtKey = []byte("secret")
+var JWTKey = []byte("secret")
 
 type Claims struct {
 	Username string
@@ -35,9 +35,22 @@ type ApiError struct {
 	ErrorMessage string
 }
 
+type TokenMessage struct {
+	Token string
+}
+
 func UserExists(username string) bool {
 	for _, v := range Users {
 		if v.Username == username {
+			return true
+		}
+	}
+	return false
+}
+
+func IsValidLogin(username string, password string) bool {
+	for _, v := range Users {
+		if username == v.Username && password == v.Password {
 			return true
 		}
 	}

@@ -7,17 +7,31 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/lesterfernandez/roommate-finder/server/data"
 	"golang.org/x/crypto/bcrypt"
 )
+
+// Create JWT =====================================================================
+func createJWT(username string) (string, error) {
+
+	expirationTime := time.Now().Add(time.Minute * 5)
+
+	claims := &jwt.RegisteredClaims{
+		Subject:   username,
+		ExpiresAt: jwt.NewNumericDate(expirationTime),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(data.JWTKey)
+
+	return tokenString, err
+}
 
 // Register a new User ====================================================
 func registerUser(w http.ResponseWriter, res *http.Request) {
 	newUser := data.RegisterBody{}
 	decodeErr := json.NewDecoder(res.Body).Decode(&newUser)
-
-	fmt.Println(decodeErr)
 
 	//if username or password are blank or invalid, throw 400 error
 	if decodeErr != nil || newUser.Username == "" || newUser.Password == "" {
@@ -41,12 +55,14 @@ func registerUser(w http.ResponseWriter, res *http.Request) {
 	//temporarily print password, so that its not an unused variable
 	fmt.Printf("Encrypted Password: %v\n", passDigest)
 
-	w.Write([]byte("User Created"))
 	data.Users = append(data.Users, &newUser)
 
-	for _, v := range data.Users {
-		fmt.Printf("User: %v\n", *v)
+	jwtToken, signingErr := createJWT(newUser.Username)
+	if signingErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 	}
+
+	sendJWT(w, jwtToken)
 
 }
 
@@ -61,12 +77,10 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 
 	//check if both username and password match
 	found := false
-	for _, v := range data.Users {
-		if v.Username == returningUser.Username && v.Password == returningUser.Password {
-			found = true
-			fmt.Printf("Success, matching user found: %v\n", v.Username)
-			w.Write([]byte("User found"))
-		}
+	if data.IsValidLogin(returningUser.Username, returningUser.Password) {
+		found = true
+		fmt.Printf("Success, matching user found: %v\n", returningUser.Username)
+
 	}
 
 	//if username/password mismatch or don't exist, throw error
@@ -75,36 +89,44 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	//set up JWT ====================
-	expirationTime := time.Now().Add(time.Minute * 5)
-
-	claims := &data.Claims{
-		Username: returningUser.Username,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	jwtKey := []byte("secret")
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey)
-
-	if err != nil {
+	//Create JWT, store it in jwtToken var
+	jwtToken, signingErr := createJWT(returningUser.Username)
+	if signingErr != nil {
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-		return
 	}
 
-	//temporarily print tokenString, to remove "unused variable" error
-	fmt.Println(tokenString)
+	sendJWT(w, jwtToken)
+
 }
 
-// Handle Error Response =====================================================
+// Handle /implicit_login
+func handleImplicitLogin(w http.ResponseWriter, res *http.Request) {
+	headers := res.Header
+	authHeader := headers.Get("Authentication")
+	fmt.Printf("AuthenticationHeader = %v\n", authHeader)
+
+}
+
+//Utility Functions ========================================================================================
+
+// Handle Error Response
 func respondWithError(w http.ResponseWriter, msg string, code int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(data.ApiError{ErrorMessage: msg})
 
 }
+
+// Encode JWT Token into JSON
+func sendJWT(w http.ResponseWriter, jwt string) {
+	json.NewEncoder(w).Encode(data.TokenMessage{Token: jwt})
+}
+
+// Verify JWT
+// func validateJWT(token string) {
+// claims := data.Claims{}
+
+// }
 
 func main() {
 
@@ -115,6 +137,7 @@ func main() {
 
 	r.Post("/register", registerUser)
 	r.Post("/login", LoginUser)
+	r.Get("/implicit_login", handleImplicitLogin)
 
 	fmt.Println("Server started on Port 3000")
 	http.ListenAndServe(":3000", r)

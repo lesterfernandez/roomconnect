@@ -14,7 +14,8 @@
     "@eslint/js": "^8.50.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.16.0"
+    "react-router-dom": "^6.16.0",
+    "zustand": "^4.4.2"
   },
   "devDependencies": {
     "@types/eslint": "^8.44.2",

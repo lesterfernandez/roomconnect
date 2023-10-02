@@ -1,12 +1,12 @@
-import { AuthData } from "../../auth/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useStore } from "../../../store";
 
 const Login = () => {
-  const auth = AuthData();
+  const login = useStore((state) => state.signIn);
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    auth?.signIn("user", "pass");
+    login("user", "pass");
     navigate("/");
   };
 

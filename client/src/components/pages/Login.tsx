@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../store";
 
 const Login = () => {
-  const login = useStore((state: any) => state.signIn);
+  const login = useStore((state) => state.signIn);
   const navigate = useNavigate();
 
   const handleSubmit = () => {

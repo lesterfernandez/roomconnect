@@ -1,37 +1,40 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 type UserProfile = {
-    username: string,
-    loggedIn: boolean
-}
+  username: string;
+  loggedIn: boolean;
+};
 
 type AccountActions = {
-    signIn: (user: UserProfile['username'], pass: string) => void,
-    signOut: () => void
-}
+  signIn: (user: UserProfile["username"], pass: string) => void;
+  signOut: () => void;
+};
 
-export const useAuthStore = create<UserProfile & AccountActions>((set) => ({
-    username: "",
-    loggedIn: false,
+export const useAuthStore = create<UserProfile & AccountActions>(set => ({
+  username: "",
+  loggedIn: false,
 
-    signIn: (username, pass) => set(() => {
-        let matchUser = "user", matchPass = "pass";
+  signIn: (username, pass) =>
+    set(() => {
+      let matchUser = "user",
+        matchPass = "pass";
 
-        if (username === matchUser && pass === matchPass) {
-            return ({
-                username: username,
-                loggedIn: true
-            })
-        }
+      if (username === matchUser && pass === matchPass) {
+        return {
+          username: username,
+          loggedIn: true,
+        };
+      }
 
-        return ({
-            username: "",
-            loggedIn: false
-        })
+      return {
+        username: "",
+        loggedIn: false,
+      };
     }),
 
-    signOut: () => set(() => ({ 
-        username: "",
-        loggedIn: false
-    }))
-}))
+  signOut: () =>
+    set(() => ({
+      username: "",
+      loggedIn: false,
+    })),
+}));

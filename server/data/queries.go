@@ -25,6 +25,11 @@ type RegisterBody struct {
 	Password    string
 }
 
+type UserCredentials struct {
+	Username string
+	Password string
+}
+
 type ChatMessage struct {
 	Type string
 	From string

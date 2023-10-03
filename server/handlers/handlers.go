@@ -44,6 +44,7 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 	jwtToken, signingErr := token.CreateJWT(newUser.Username)
 	if signingErr != nil {
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
 	token.SendJWT(w, jwtToken)
@@ -80,6 +81,7 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 	jwtToken, signingErr := token.CreateJWT(returningUser.Username)
 	if signingErr != nil {
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
 	token.SendJWT(w, jwtToken)

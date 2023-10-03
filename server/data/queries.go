@@ -1,17 +1,8 @@
 package data
 
-import (
-	"github.com/golang-jwt/jwt"
-)
-
 var Users []*RegisterBody
 
 var JWTKey = []byte("secret")
-
-type Claims struct {
-	Username string
-	jwt.StandardClaims
-}
 
 type RegisterBody struct {
 	profilePic  string

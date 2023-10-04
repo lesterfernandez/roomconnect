@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export const ApiErrorSchema = z.object({
+export const apiErrorSchema = z.object({
   errorMessage: z.string(),
 });
 
-export const UserProfileSchema = z
+export const userProfileSchema = z
   .object({
     profilePic: z.string().optional(),
     displayName: z.string(),
@@ -14,8 +14,8 @@ export const UserProfileSchema = z
     loudness: z.literal(1).or(z.literal(2)).or(z.literal(3)),
     coed: z.boolean(),
   })
-  .or(ApiErrorSchema);
+  .or(apiErrorSchema);
 
-export const TokenMessageSchema = z.object({
+export const tokenMessageSchema = z.object({
   token: z.string(),
 });

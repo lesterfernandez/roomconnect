@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/lesterfernandez/roommate-finder/server/data"
 	"github.com/lesterfernandez/roommate-finder/server/token"
@@ -89,7 +90,30 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 	headers := res.Header
 	authHeader := headers.Get("Authentication")
-	fmt.Printf("AuthenticationHeader = %v\n", authHeader)
+
+	//Check if the Auth Header has valid format
+	if !strings.Contains(authHeader, " ") {
+		respondWithError(w, "Unauthorized Response", http.StatusUnauthorized)
+		return
+	}
+	//Split the `Bearer Token` string into an array, and extract the `Token`
+	splitAuthHeader := strings.Split(authHeader, " ")
+	JWT := splitAuthHeader[1]
+	claims, err := token.VerifyJWT(JWT, token.JWTKey)
+	if err != nil {
+		respondWithError(w, "Unauthorized Reponse; Invalid JWT", http.StatusUnauthorized)
+		return
+	}
+
+	//Send 200 OK http Status
+	w.WriteHeader(http.StatusOK)
+	fmt.Printf("Claims: %v\n", claims)
+	fmt.Printf("Claims Subject: %v\n", claims["sub"])
+
+	//Respond with RegisterBody JSON
+	// foundUser := data.FindUser(claims["sub"].(string))
+	// json.NewEncoder(w).Encode(foundUser)
+	// fmt.Println(*foundUser)
 
 }
 

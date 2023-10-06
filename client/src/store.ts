@@ -1,11 +1,17 @@
 import { create } from "zustand";
+import { UserProfile } from "./types";
 
-type UserProfile = {
-  username: string;
-  loggedIn: boolean;
-};
+export const useProfileStore = create(set => ({
+  profilePic: "",
+  displayName: "",
+  budget: 1,
+  gender: "",
+  cleanliness: 1,
+  loudness: 1,
+  coed: false,
 
-export const useAuthStore = create<UserProfile>(() => ({
-  username: "",
-  loggedIn: false,
+  setProfile: (newProfile: UserProfile) =>
+    set(() => ({
+      ...newProfile,
+    })),
 }));

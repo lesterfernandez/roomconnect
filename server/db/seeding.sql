@@ -1,4 +1,4 @@
-\ echo 'Seeding database...'
+\echo 'Seeding database...'
 
 INSERT INTO
     users (
@@ -69,4 +69,4 @@ VALUES
         TRUE
     );
 
-\ echo 'Finished seeding database'
+\echo 'Finished seeding database'

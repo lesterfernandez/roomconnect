@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/lesterfernandez/roommate-finder/server/data"
 	"github.com/lesterfernandez/roommate-finder/server/token"
-	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 // ==============================================================================
@@ -30,25 +30,19 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	//encrypt password
-	passDigest, hashErr := bcrypt.GenerateFromPassword([]byte(newUser.Password), 10)
-	if hashErr != nil {
-		respondWithError(w, "Something went wrong", http.StatusInternalServerError)
-		return
+	err := data.CreateUser(newUser)
+
+	if err == nil {
+		jwtToken, signingErr := token.CreateJWT(newUser.Username)
+		if signingErr != nil {
+			respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		token.SendJWT(w, jwtToken)
+	} else {
+		panic(err.Error())
 	}
-	//temporarily print password, so that its not an unused variable
-	fmt.Printf("Encrypted Password: %v\n", passDigest)
-
-	data.Users = append(data.Users, &newUser)
-
-	jwtToken, signingErr := token.CreateJWT(newUser.Username)
-	if signingErr != nil {
-		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	token.SendJWT(w, jwtToken)
-
 }
 
 // ==============================================================================

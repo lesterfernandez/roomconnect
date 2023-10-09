@@ -21,7 +21,6 @@ type RegisterBody struct {
 }
 
 type UserProfile struct {
-	Username    string `db:"username"`
 	ProfilePic  string `db:"profile_pic"`
 	DisplayName string `db:"display_name"`
 	Budget      int    `db:"budget_tier"`
@@ -82,8 +81,7 @@ func CreateUser(newUser RegisterBody) error {
 
 func GetUser(username string) UserProfile {
 	rows, _ := db.Query(context.Background(), `
-		SELECT  username, 
-				display_name, 
+		SELECT  display_name, 
 				gender, 
 				profile_pic,
 				clean_tier, 

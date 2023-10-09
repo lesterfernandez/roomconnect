@@ -17,9 +17,6 @@ import { useState } from "react";
 import { UserCredientials } from "../../types";
 import { userCredentialsSchema } from "../../schemas";
 
-type Action = { type: 'loginSuccess', payload: string }
-| { type: 'loginFailed', payload: string };
-
 const Login = () => {
   const [loginBody, setLoginBody] = useState<UserCredientials>({
     username: "",

@@ -32,19 +32,15 @@ const Login = () => {
       alert("Login import failed!");
       return;
     }
-
-    if (loginBody.username !== '' && loginBody.password !== '') {
-      dispatch({
-        type: 'loginSuccess',
-        payload: 'Login Successfully'
-      }); 
+    if (loginBody.username == '' || loginBody.password !== '') {
+      alert("Login failed!");
+      return;
     }
-    else {
-      dispatch({
-        type: 'loginFailed',
-        payload: 'Incorrect username or password'
-      });
-    }
+    alert(JSON.stringify(parsedLoginBody.data));
   }
+
+  return (
+  
+  );
 };
 export default Login;

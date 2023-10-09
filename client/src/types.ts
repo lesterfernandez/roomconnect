@@ -15,3 +15,10 @@ export type ApiError = {
 export type TokenMessage = {
   token: string;
 };
+
+export interface UserCredentials {
+	username: string;
+	password: string;
+}
+
+export type RegisterBody = UserCredentials & UserProfile;

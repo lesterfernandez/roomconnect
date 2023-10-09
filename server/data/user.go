@@ -8,7 +8,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User struct {
+type RegisterBody struct {
+	ProfilePic  string
+	DisplayName string
+	Budget      int
+	Gender      string
+	Cleanliness int
+	Loudness    int
+	Coed        bool
+	Username    string
+	Password    string
+}
+
+type UserProfile struct {
 	Username    string `db:"username"`
 	ProfilePic  string `db:"profile_pic"`
 	DisplayName string `db:"display_name"`
@@ -68,7 +80,7 @@ func CreateUser(newUser RegisterBody) error {
 	return nil
 }
 
-func GetUser(username string) User {
+func GetUser(username string) UserProfile {
 	rows, _ := db.Query(context.Background(), `
 		SELECT  username, 
 				display_name, 
@@ -82,16 +94,14 @@ func GetUser(username string) User {
 		WHERE username=$1
 	`, username)
 
-	user, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[User])
+	userProfile, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[UserProfile])
 
 	if err != nil {
 		fmt.Println(username, "not found")
-		return User{}
+		return UserProfile{}
 	}
 
-	publicUser := *user
-
-	return publicUser
+	return *userProfile
 }
 
 func UserExists(username string) bool {

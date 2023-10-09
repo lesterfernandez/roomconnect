@@ -31,18 +31,18 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 	}
 
 	err := data.CreateUser(newUser)
-
 	if err == nil {
-		jwtToken, signingErr := token.CreateJWT(newUser.Username)
-		if signingErr != nil {
-			respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		token.SendJWT(w, jwtToken)
-	} else {
-		panic(err.Error())
+		respondWithError(w, "Error creating user", http.StatusInternalServerError)
+		return
 	}
+
+	jwtToken, signingErr := token.CreateJWT(newUser.Username)
+	if signingErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	token.SendJWT(w, jwtToken)
 }
 
 // ==============================================================================

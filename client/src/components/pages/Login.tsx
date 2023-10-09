@@ -19,7 +19,9 @@ import { userCredentialsSchema } from "../../schemas";
 
 
 const Login = () => {
-  return <div>Login</div>;
+  const [loginBody, setLoginBody] = useState<UserCredientials>({
+    username: "",
+    password: ""
+  });
 };
-
 export default Login;

@@ -43,20 +43,12 @@ func CreateJWT(username string) (string, error) {
 // Verify that a JWT is valid, and return the registeredClaims
 //========================================================================================================
 
-func VerifyJWT(tokenString string, secretKey []byte) (jwt.MapClaims, error) {
+func VerifyJWT(tokenString string, secretKey []byte) (*jwt.Token, error) {
 
-	//Verify that the signing method is correct
-	verifySigningMethod := func(token *jwt.Token) (interface{}, error) {
-		// Check the signing method
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		// Return the secret key for validation
+	//Verify the correct signing method is used (HS256)
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		return secretKey, nil
-	}
-
-	// Parse the JWT token using verifySigningMethod
-	token, err := jwt.Parse(tokenString, verifySigningMethod)
+	}, jwt.WithValidMethods([]string{"HS256"}))
 
 	if err != nil {
 		return nil, err
@@ -67,10 +59,5 @@ func VerifyJWT(tokenString string, secretKey []byte) (jwt.MapClaims, error) {
 		return nil, fmt.Errorf("token is not valid")
 	}
 
-	// Extract the claims from the token
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return claims, nil
-	}
-
-	return nil, fmt.Errorf("failed to parse claims")
+	return token, nil
 }

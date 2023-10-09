@@ -99,7 +99,7 @@ func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 	//Split the `Bearer Token` string into an array, and extract the `Token`
 	splitAuthHeader := strings.Split(authHeader, " ")
 	JWT := splitAuthHeader[1]
-	claims, err := token.VerifyJWT(JWT, token.JWTKey)
+	token, err := token.VerifyJWT(JWT, token.JWTKey)
 	if err != nil {
 		respondWithError(w, "Unauthorized Reponse; Invalid JWT", http.StatusUnauthorized)
 		return
@@ -107,12 +107,14 @@ func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 
 	//Send 200 OK http Status
 	w.WriteHeader(http.StatusOK)
-	fmt.Printf("Claims: %v\n", claims)
-	fmt.Printf("Claims Subject: %v\n", claims["sub"])
+	fmt.Printf("Claims: %v\n", token.Claims)
 
 	//Respond with RegisterBody JSON
-	// foundUser := data.FindUser(claims["sub"].(string))
-	// json.NewEncoder(w).Encode(foundUser)
+	//PROBABLY will result in error. GetUser replaced old findUser func
+	subject, _ := token.Claims.GetSubject()
+	foundUser := data.GetUser(subject)
+
+	json.NewEncoder(w).Encode(foundUser)
 	// fmt.Println(*foundUser)
 
 }

@@ -26,4 +26,3 @@ export const userCredentialsSchema = z.object({
 });
 
 export const registerBodySchema = userProfileSchema.and(userCredentialsSchema);
-

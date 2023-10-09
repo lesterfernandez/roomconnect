@@ -21,21 +21,27 @@ const Register = () => {
     username: "",
     password: "",
     displayName: "",
-    budget: 1,
+    budget: 0,
     gender: "",
-    cleanliness: 1,
-    loudness: 1,
+    cleanliness: 0,
+    loudness: 0,
     coed: false,
   });
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
-    if (parsedRegisterBody.success) {
-      alert(JSON.stringify(parsedRegisterBody.data));
-    } else {
+    if (!parsedRegisterBody.success) {
       alert("Invalid form.");
+      return;
     }
+
+    if (registerBody.password !== confirmPassword) {
+      alert("The passwords you entered do not match.");
+      return;
+    }
+
+    alert(JSON.stringify(parsedRegisterBody.data));
   };
 
   return (
@@ -167,7 +173,7 @@ const Register = () => {
                 background: "#e2e8f0",
               }}
             >
-              Mr. Clean
+              Clean Freak
             </Button>
           </ButtonGroup>
         </FormControl>
@@ -196,7 +202,7 @@ const Register = () => {
                 background: "#e2e8f0",
               }}
             >
-              Normal
+              Average
             </Button>
             <Button
               onClick={() => setRegisterBody({ ...registerBody, loudness: 3 })}

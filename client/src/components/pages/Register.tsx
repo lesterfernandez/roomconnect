@@ -28,19 +28,20 @@ const Register = () => {
     coed: false,
   });
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [registerLoading, setRegisterLoading] = useState(false);
 
   const handleRegister = async () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
     if (!parsedRegisterBody.success) {
-      alert("Invalid form.");
+      console.log("Invalid form.");
       return;
     }
 
     if (registerBody.password !== confirmPassword) {
-      alert("The passwords you entered do not match.");
+      console.log("The passwords you entered do not match.");
       return;
     }
-    
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
         method: "POST",
@@ -51,7 +52,7 @@ const Register = () => {
       });
 
       if (response.status === 409) {
-        alert("Username conflict.");
+        console.log("Username conflict.");
         return;
       }
 
@@ -69,13 +70,11 @@ const Register = () => {
 
       // localStorage.setItem('tokenMessage', JSON.stringify(parsedTokenMessage));
 
-      alert(JSON.stringify(parsedRegisterBody.data));
-
+      console.log(JSON.stringify(parsedRegisterBody.data));
     } catch (error) {
-      alert("System error.");
+      console.log(error);
     }
-
-  }
+  };
 
   return (
     <Box bg="#156087">
@@ -264,7 +263,14 @@ const Register = () => {
           </RadioGroup>
         </FormControl>
         <FormControl display="flex" justifyContent="center">
-          <Button colorScheme="orange" onClick={handleRegister}>
+          <Button
+            isLoading={registerLoading}
+            colorScheme="orange"
+            onClick={() => {
+              setRegisterLoading(true);
+              handleRegister().then(() => setRegisterLoading(false));
+            }}
+          >
             Register
           </Button>
         </FormControl>

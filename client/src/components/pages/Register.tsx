@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../../types";
-import { registerBodySchema } from "../../schemas";
+import { registerBodySchema, tokenMessageSchema } from "../../schemas";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -29,7 +29,7 @@ const Register = () => {
   });
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
     if (!parsedRegisterBody.success) {
       alert("Invalid form.");
@@ -40,9 +40,42 @@ const Register = () => {
       alert("The passwords you entered do not match.");
       return;
     }
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerBody),
+      });
 
-    alert(JSON.stringify(parsedRegisterBody.data));
-  };
+      if (response.status === 409) {
+        alert("Username conflict.");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      const tokenMessage = await response.json();
+      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
+      if (!parsedTokenMessage.success) {
+        throw new Error();
+      }
+
+      console.log(parsedTokenMessage);
+
+      // localStorage.setItem('tokenMessage', JSON.stringify(parsedTokenMessage));
+
+      alert(JSON.stringify(parsedRegisterBody.data));
+
+    } catch (error) {
+      alert("System error.");
+    }
+
+  }
 
   return (
     <Box bg="#156087">

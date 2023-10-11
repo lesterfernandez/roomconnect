@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-rou
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { userProfileSchema } from "./schemas.ts";
+import NotFound from "./NotFound.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
         element: <Test />,
       },
     ],
+    errorElement: <NotFound />,
   },
   {
     path: "/login",

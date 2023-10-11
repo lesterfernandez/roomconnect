@@ -14,7 +14,6 @@ const router = createBrowserRouter([
     loader: async () => {
       try {
         const response = await fetch("localhost:8080/implicit_login", {
-          mode: "cors",
           method: "GET",
           headers: {
             Authorization: `Bearer ${"TOKEN WILL GO HERE"}`,

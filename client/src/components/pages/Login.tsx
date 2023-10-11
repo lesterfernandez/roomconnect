@@ -23,7 +23,7 @@ const Login = () => {
   };
 
   return (
-    <Box bg="#156087" display="flex" minH="calc(100vh)">
+    <Box bg="#156087" display="flex" minH="100vh">
       <VStack w="md" maxW="2xl" textColor="white" padding="3rem" gap="5" m="auto">
         <Heading textAlign="center">Login</Heading>
         <FormControl>

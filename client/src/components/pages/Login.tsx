@@ -1,7 +1,18 @@
-import { FormControl, FormLabel, Input, Button, Heading, Box, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Heading,
+  Box,
+  VStack,
+  HStack,
+  Text,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { UserCredentials } from "../../types";
 import { userCredentialsSchema } from "../../schemas";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [loginBody, setLoginBody] = useState<UserCredentials>({
@@ -42,6 +53,12 @@ const Login = () => {
             onChange={event => setLoginBody({ ...loginBody, password: event.target.value })}
           />
         </FormControl>
+        <HStack>
+          <Text>Don&apos;t have an account? </Text>
+          <Link to="/register">
+            <Text textDecoration="underline">Create Account</Text>
+          </Link>
+        </HStack>
         <FormControl display="flex" justifyContent="center">
           <Button colorScheme="orange" onClick={handleLogin}>
             Login

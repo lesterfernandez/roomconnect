@@ -1,0 +1,22 @@
+name: Lint Frontend Code
+on:
+  pull_request:
+    paths:
+      - client/**
+jobs:
+  Lint_Frontend_Code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.0
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version: 18
+      - run: npm ci
+        working-directory: client
+      - run: npm run lint
+        working-directory: client
+      - run: >
+          echo '
+          If this test failed, run "npm run lint" in your local dev environment." and fix the errors/warnings. 
+          Next, add those changes to the staging area with "git add" and ammend those changes to your PR with "git commit --amend --no-edit && git push origin branch_name_here -f"
+          '

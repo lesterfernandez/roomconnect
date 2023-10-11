@@ -11,8 +11,7 @@ import {
   Heading,
   Box,
   VStack,
-} 
-from "@chakra-ui/react";
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../../types";
 import { registerBodySchema, tokenMessageSchema } from "../../schemas";

@@ -1,39 +1,30 @@
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  Heading,
-  Box,
-  VStack
-} 
-from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, Button, Heading, Box, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-import { UserCredientials } from "../../types";
+import { UserCredentials } from "../../types";
 import { userCredentialsSchema } from "../../schemas";
 
 const Login = () => {
-  const [loginBody, setLoginBody] = useState<UserCredientials>({
+  const [loginBody, setLoginBody] = useState<UserCredentials>({
     username: "",
-    password: ""
+    password: "",
   });
 
   const handleLogin = () => {
-    const parsedLoginBody = userCredentialsSchema.safeParse(UserCredientials);
+    const parsedLoginBody = userCredentialsSchema.safeParse(loginBody);
     if (!parsedLoginBody.success) {
       alert("Login import failed!");
       return;
     }
-    if (loginBody.username == '' || loginBody.password == '') {
+    if (loginBody.username == "" || loginBody.password == "") {
       alert("Please enter a username and password!");
       return;
     }
     alert(JSON.stringify(parsedLoginBody.data));
-  }
+  };
 
   return (
-    <Box bg="#156087">
-      <VStack maxW="2xl" textColor="white" padding="3rem" gap="4" marginInline="auto">
+    <Box bg="#156087" display="flex" minH="100vh">
+      <VStack w="md" maxW="2xl" textColor="white" padding="3rem" gap="5" m="auto">
         <Heading textAlign="center">Login</Heading>
         <FormControl>
           <FormLabel>Username</FormLabel>

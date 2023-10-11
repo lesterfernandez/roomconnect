@@ -18,6 +18,7 @@ import { useState } from "react";
 import { RegisterBody } from "../../types";
 import { registerBodySchema, tokenMessageSchema } from "../../schemas";
 import { Link } from "react-router-dom";
+import { setToken } from "../../token";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -69,11 +70,7 @@ const Register = () => {
         throw new Error();
       }
 
-      console.log(parsedTokenMessage);
-
-      // localStorage.setItem('tokenMessage', JSON.stringify(parsedTokenMessage));
-
-      console.log(JSON.stringify(parsedRegisterBody.data));
+      setToken(parsedTokenMessage.data.token);
     } catch (error) {
       console.log(error);
     }

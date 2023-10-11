@@ -12,11 +12,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     loader: async () => {
+      const token = localStorage.getItem("token") ?? null;
+
       try {
+        if (!token) throw new Error("No such token");
+
         const response = await fetch("localhost:8080/implicit_login", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 

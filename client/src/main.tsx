@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Login, Register, Test, Loading } from "./components/pages";
+import { Login, Register, Test, Loading, NotFound } from "./components/pages";
 
 import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-router-dom";
 
@@ -38,6 +38,7 @@ const router = createBrowserRouter([
         element: <Test />,
       },
     ],
+    errorElement: <NotFound />,
   },
   {
     path: "/login",

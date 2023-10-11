@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "prettier -w . && eslint --fix .",
-    "lint-check": "prettier . -c && eslint .",
+    "lint": "tsc --noEmit && prettier -w . && eslint --fix .",
+    "lint-check": "tsc --noEmit && prettier . -c && eslint .",
     "preview": "vite preview",
     "prepare": "cd .. && husky install client/.husky"
   },

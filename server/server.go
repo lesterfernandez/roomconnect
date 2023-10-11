@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/lesterfernandez/roommate-finder/server/data"
 	"github.com/lesterfernandez/roommate-finder/server/handlers"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -19,6 +20,16 @@ func main() {
 	}
 
 	r := chi.NewRouter()
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowCredentials: true,
+		// Enable Debugging for testing, consider disabling in production
+		Debug: true,
+	})
+
+	r.Use(c.Handler)
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello World!"))
 	})

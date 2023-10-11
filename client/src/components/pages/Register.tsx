@@ -11,10 +11,13 @@ import {
   Heading,
   Box,
   VStack,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../../types";
 import { registerBodySchema, tokenMessageSchema } from "../../schemas";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -262,6 +265,12 @@ const Register = () => {
             </Stack>
           </RadioGroup>
         </FormControl>
+        <HStack>
+          <Text>Already have an account? </Text>
+          <Link to="/login">
+            <Text textDecoration="underline">Login</Text>
+          </Link>
+        </HStack>
         <FormControl display="flex" justifyContent="center">
           <Button
             isLoading={registerLoading}

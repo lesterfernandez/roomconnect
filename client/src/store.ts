@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { UserProfile } from "./types";
 
-export const useProfileStore = create(set => ({
+export const useProfileStore = create<UserProfile>(() => ({
   profilePic: "",
   displayName: "",
   budget: 0,
@@ -9,9 +9,4 @@ export const useProfileStore = create(set => ({
   cleanliness: 0,
   loudness: 0,
   coed: false,
-
-  setProfile: (newProfile: UserProfile) =>
-    set(() => ({
-      ...newProfile,
-    })),
 }));

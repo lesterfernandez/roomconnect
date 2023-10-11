@@ -7,33 +7,44 @@ import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-rou
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { userProfileSchema } from "./schemas.ts";
+import { useProfileStore } from "./store.ts";
+
+const implicitLogin = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    if (!token) throw new Error("No such token");
+
+    const response = await fetch("localhost:8080/implicit_login", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const parsedResponse = userProfileSchema.safeParse(response.json());
+    if (!parsedResponse.success) {
+      console.log("Unable to make implicit login");
+      return redirect("/login");
+    }
+
+    if ("errorMessage" in parsedResponse.data) {
+      return redirect("/login");
+    }
+
+    useProfileStore.setState(parsedResponse.data);
+    return <Outlet />;
+  } catch (error) {
+    console.log("Unexpected error");
+    return redirect("/login");
+  }
+};
 
 const router = createBrowserRouter([
   {
     path: "/",
     loader: async () => {
-      const token = localStorage.getItem("token") ?? null;
-
-      try {
-        if (!token) throw new Error("No such token");
-
-        const response = await fetch("localhost:8080/implicit_login", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const parsedResponse = userProfileSchema.safeParse(response.json());
-        if (!parsedResponse.success) {
-          console.log("Unable to make implicit login");
-          return redirect("/login");
-        }
-        return <Outlet />;
-      } catch (error) {
-        console.log("Unexpected error");
-        return redirect("/login");
-      }
+      implicitLogin();
     },
     element: <Loading />,
     children: [

@@ -16,7 +16,7 @@ const router = createBrowserRouter([
         const response = await fetch("localhost:8080/implicit_login", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${"TOKEN WILL GO HERE"}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
 

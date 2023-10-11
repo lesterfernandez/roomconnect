@@ -11,11 +11,12 @@ import (
 var db *pgxpool.Pool
 
 func Connect() {
-	name := os.Getenv("POSTGRES_DB")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	host := os.Getenv("POSTGRES_HOST")
-	port := os.Getenv("POSTGRES_PORT")
-	user := os.Getenv("POSTGRES_USER")
+
+	name := getEnv("POSTGRES_DB", "db")
+	password := getEnv("POSTGRES_PASSWORD", "pass")
+	host := getEnv("POSTGRES_HOST", "host")
+	port := getEnv("POSTGRES_PORT", 5000)
+	user := getEnv("POSTGRES_USER", "user")
 
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
 	fmt.Println("Connecting to database URI:", connectionString)
@@ -34,4 +35,13 @@ func Connect() {
 
 func Close() {
 	db.Close()
+}
+
+// Function to set default env values, if they don't exist
+// interface{} is used, because we need to return both strings and ints
+func getEnv(key string, fallback interface{}) interface{} {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }

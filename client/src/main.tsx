@@ -1,13 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Login, Register, Test, Loading } from "./components/pages";
+import { Login, Register, Test, Loading, NotFound } from "./components/pages";
 
 import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-router-dom";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { userProfileSchema } from "./schemas.ts";
-import NotFound from "./NotFound.tsx";
 
 const router = createBrowserRouter([
   {

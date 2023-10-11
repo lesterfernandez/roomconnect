@@ -15,7 +15,7 @@ import {
 from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../../types";
-import { registerBodySchema } from "../../schemas";
+import { registerBodySchema, tokenMessageSchema } from "../../schemas";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -29,20 +29,52 @@ const Register = () => {
     coed: false,
   });
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [registerLoading, setRegisterLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
     if (!parsedRegisterBody.success) {
-      alert("Invalid form.");
+      console.log("Invalid form.");
       return;
     }
 
     if (registerBody.password !== confirmPassword) {
-      alert("The passwords you entered do not match.");
+      console.log("The passwords you entered do not match.");
       return;
     }
 
-    alert(JSON.stringify(parsedRegisterBody.data));
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerBody),
+      });
+
+      if (response.status === 409) {
+        console.log("Username conflict.");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error();
+      }
+
+      const tokenMessage = await response.json();
+      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
+      if (!parsedTokenMessage.success) {
+        throw new Error();
+      }
+
+      console.log(parsedTokenMessage);
+
+      // localStorage.setItem('tokenMessage', JSON.stringify(parsedTokenMessage));
+
+      console.log(JSON.stringify(parsedRegisterBody.data));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -232,7 +264,14 @@ const Register = () => {
           </RadioGroup>
         </FormControl>
         <FormControl display="flex" justifyContent="center">
-          <Button colorScheme="orange" onClick={handleRegister}>
+          <Button
+            isLoading={registerLoading}
+            colorScheme="orange"
+            onClick={() => {
+              setRegisterLoading(true);
+              handleRegister().then(() => setRegisterLoading(false));
+            }}
+          >
             Register
           </Button>
         </FormControl>

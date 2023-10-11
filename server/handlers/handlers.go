@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/lesterfernandez/roommate-finder/server/data"
 	"github.com/lesterfernandez/roommate-finder/server/token"
-	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 // ==============================================================================
@@ -30,16 +31,11 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	//encrypt password
-	passDigest, hashErr := bcrypt.GenerateFromPassword([]byte(newUser.Password), 10)
-	if hashErr != nil {
-		respondWithError(w, "Something went wrong", http.StatusInternalServerError)
+	err := data.CreateUser(newUser)
+	if err == nil {
+		respondWithError(w, "Error creating user", http.StatusInternalServerError)
 		return
 	}
-	//temporarily print password, so that its not an unused variable
-	fmt.Printf("Encrypted Password: %v\n", passDigest)
-
-	data.Users = append(data.Users, &newUser)
 
 	jwtToken, signingErr := token.CreateJWT(newUser.Username)
 	if signingErr != nil {
@@ -48,7 +44,6 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 	}
 
 	token.SendJWT(w, jwtToken)
-
 }
 
 // ==============================================================================
@@ -95,7 +90,32 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 	headers := res.Header
 	authHeader := headers.Get("Authentication")
-	fmt.Printf("AuthenticationHeader = %v\n", authHeader)
+
+	//Check if the Auth Header has valid format
+	if !strings.Contains(authHeader, " ") {
+		respondWithError(w, "Unauthorized Response", http.StatusUnauthorized)
+		return
+	}
+	//Split the `Bearer Token` string into an array, and extract the `Token`
+	splitAuthHeader := strings.Split(authHeader, " ")
+	JWT := splitAuthHeader[1]
+	token, err := token.VerifyJWT(JWT, token.JWTKey)
+	if err != nil {
+		respondWithError(w, "Unauthorized Reponse; Invalid JWT", http.StatusUnauthorized)
+		return
+	}
+
+	//Send 200 OK http Status
+	w.WriteHeader(http.StatusOK)
+	fmt.Printf("Claims: %v\n", token.Claims)
+
+	//Respond with RegisterBody JSON
+	//PROBABLY will result in error. GetUser replaced old findUser func
+	subject, _ := token.Claims.GetSubject()
+	foundUser := data.GetUser(subject)
+
+	json.NewEncoder(w).Encode(foundUser)
+	// fmt.Println(*foundUser)
 
 }
 

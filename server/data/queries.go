@@ -13,5 +13,5 @@ type ApiError struct {
 }
 
 type TokenMessage struct {
-	Token string
+	Token string `json:"token"`
 }

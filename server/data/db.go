@@ -15,7 +15,7 @@ func Connect() {
 	name := getEnv("POSTGRES_DB", "db")
 	password := getEnv("POSTGRES_PASSWORD", "pass")
 	host := getEnv("POSTGRES_HOST", "host")
-	port := getEnv("POSTGRES_PORT", 5000)
+	port := getEnv("POSTGRES_PORT", "5000")
 	user := getEnv("POSTGRES_USER", "user")
 
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
@@ -38,8 +38,7 @@ func Close() {
 }
 
 // Function to set default env values, if they don't exist
-// interface{} is used, because we need to return both strings and ints
-func getEnv(key string, fallback interface{}) interface{} {
+func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}

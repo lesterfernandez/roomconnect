@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Login, Register, Test, Loading, NotFound } from "./components/pages";
+import { Login, Register, Loading, NotFound } from "./components/pages";
 
 import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-router-dom";
 
@@ -36,12 +36,6 @@ const router = createBrowserRouter([
       }
     },
     element: <Loading />,
-    children: [
-      {
-        index: true,
-        element: <Test />,
-      },
-    ],
     errorElement: <NotFound />,
   },
   {

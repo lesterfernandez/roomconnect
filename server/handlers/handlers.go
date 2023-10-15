@@ -32,7 +32,7 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 	}
 
 	err := data.CreateUser(newUser)
-	if err == nil {
+	if err != nil {
 		respondWithError(w, "Error creating user", http.StatusInternalServerError)
 		return
 	}

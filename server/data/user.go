@@ -162,7 +162,6 @@ func SearchUsers(field string, query string) []*UserProfile {
 		WHERE %s=$1
 		`, searchField)
 
-	fmt.Println(&query)
 	rows, err := db.Query(context.Background(), sqlQuery, &query)
 
 	if err != nil {

@@ -37,6 +37,7 @@ func main() {
 	r.Post("/register", handlers.RegisterUser)
 	r.Post("/login", handlers.LoginUser)
 	r.Get("/implicit_login", handlers.HandleImplicitLogin)
+	r.Get("/search", handlers.SearchUsers)
 
 	data.Connect()
 	defer data.Close()

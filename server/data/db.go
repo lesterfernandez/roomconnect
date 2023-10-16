@@ -36,11 +36,3 @@ func Connect() {
 func Close() {
 	db.Close()
 }
-
-// Function to set default env values, if they don't exist
-func getEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return fallback
-}

@@ -33,16 +33,17 @@ const Register = () => {
   });
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleRegister = async () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
     if (!parsedRegisterBody.success) {
-      console.log("Invalid form.");
+      setError("Invalid form.");
       return;
     }
 
     if (registerBody.password !== confirmPassword) {
-      console.log("The passwords you entered do not match.");
+      setError("The passwords you entered do not match.");
       return;
     }
 
@@ -56,18 +57,20 @@ const Register = () => {
       });
 
       if (response.status === 409) {
-        console.log("Username conflict.");
+        setError("Username conflict.");
         return;
       }
 
       if (!response.ok) {
-        throw new Error();
+        setError("Server Error.");
+        return;
       }
 
       const tokenMessage = await response.json();
       const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
       if (!parsedTokenMessage.success) {
-        throw new Error();
+        setError("Server Error.");
+        return;
       }
 
       setToken(parsedTokenMessage.data.token);
@@ -280,6 +283,9 @@ const Register = () => {
             Register
           </Button>
         </FormControl>
+        <Box height="1rem">
+          <Text textColor="red">{error}</Text>
+        </Box>
       </VStack>
     </Box>
   );

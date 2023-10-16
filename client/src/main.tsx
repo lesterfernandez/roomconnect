@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Login, Register, Loading, NotFound } from "./components/pages";
+import { Login, Register, Loading, NotFound, EditProfile, Search } from "./components/pages";
 
 import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-router-dom";
 
@@ -45,6 +45,14 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/profile",
+    element: <EditProfile />,
+  },
+  {
+    path: "/search",
+    element: <Search />,
   },
 ]);
 

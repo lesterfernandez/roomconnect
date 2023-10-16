@@ -11,10 +11,14 @@ import {
   Heading,
   Box,
   VStack,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../../types";
 import { registerBodySchema, tokenMessageSchema } from "../../schemas";
+import { Link } from "react-router-dom";
+import { setToken } from "../../token";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -66,11 +70,7 @@ const Register = () => {
         throw new Error();
       }
 
-      console.log(parsedTokenMessage);
-
-      // localStorage.setItem('tokenMessage', JSON.stringify(parsedTokenMessage));
-
-      console.log(JSON.stringify(parsedRegisterBody.data));
+      setToken(parsedTokenMessage.data.token);
     } catch (error) {
       console.log(error);
     }
@@ -262,6 +262,12 @@ const Register = () => {
             </Stack>
           </RadioGroup>
         </FormControl>
+        <HStack>
+          <Text>Already have an account? </Text>
+          <Link to="/login">
+            <Text textDecoration="underline">Login</Text>
+          </Link>
+        </HStack>
         <FormControl display="flex" justifyContent="center">
           <Button
             isLoading={registerLoading}

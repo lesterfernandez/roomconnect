@@ -4,12 +4,28 @@ import { UserCredentials } from "../../types";
 import { userCredentialsSchema } from "../../schemas";
 
 const Login = () => {
+  async function callLogin(data: string) {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      });
+      const result = await response.json();
+      console.log(result.tokenMessage);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const [loginBody, setLoginBody] = useState<UserCredentials>({
     username: "",
     password: "",
   });
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const parsedLoginBody = userCredentialsSchema.safeParse(loginBody);
     if (!parsedLoginBody.success) {
       alert("Login import failed!");
@@ -19,7 +35,7 @@ const Login = () => {
       alert("Please enter a username and password!");
       return;
     }
-    alert(JSON.stringify(parsedLoginBody.data));
+    callLogin(JSON.stringify(parsedLoginBody.data));
   };
 
   return (
@@ -43,7 +59,14 @@ const Login = () => {
           />
         </FormControl>
         <FormControl display="flex" justifyContent="center">
-          <Button colorScheme="orange" onClick={handleLogin}>
+          <Button
+            isLoading={loginLoading}
+            colorScheme="orange"
+            onClick={() => {
+              setLoginLoading(true);
+              handleLogin().then(() => setLoginLoading(false));
+            }}
+          >
             Login
           </Button>
         </FormControl>

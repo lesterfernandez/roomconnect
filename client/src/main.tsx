@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Login, Register, Test, Loading, NotFound } from "./components/pages";
+import { Login, Register, Loading, NotFound } from "./components/pages";
 
 import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-router-dom";
 
@@ -12,11 +12,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     loader: async () => {
+      const token = localStorage.getItem("token") ?? null;
+
       try {
+        if (!token) throw new Error("No such token");
+
         const response = await fetch("localhost:8080/implicit_login", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${"TOKEN WILL GO HERE"}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -32,12 +36,6 @@ const router = createBrowserRouter([
       }
     },
     element: <Loading />,
-    children: [
-      {
-        index: true,
-        element: <Test />,
-      },
-    ],
     errorElement: <NotFound />,
   },
   {

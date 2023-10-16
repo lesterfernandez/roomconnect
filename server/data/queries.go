@@ -3,15 +3,15 @@ package data
 var JWTKey = []byte("secret")
 
 type ChatMessage struct {
-	Type string
-	From string
-	To   string
+	Type string `json:"type"`
+	From string `json:"from"`
+	To   string `json:"to"`
 }
 
 type ApiError struct {
-	ErrorMessage string
+	ErrorMessage string `json:"errorMessage"`
 }
 
 type TokenMessage struct {
-	Token string
+	Token string `json:"token"`
 }

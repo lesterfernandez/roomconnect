@@ -1,7 +1,18 @@
-import { FormControl, FormLabel, Input, Button, Heading, Box, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Heading,
+  Box,
+  VStack,
+  HStack,
+  Text,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { UserCredentials } from "../../types";
 import { userCredentialsSchema } from "../../schemas";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   async function callLogin(data: string) {
@@ -24,15 +35,16 @@ const Login = () => {
     password: "",
   });
   const [loginLoading, setLoginLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     const parsedLoginBody = userCredentialsSchema.safeParse(loginBody);
     if (!parsedLoginBody.success) {
-      alert("Login import failed!");
+      setError("Login import failed!");
       return;
     }
     if (loginBody.username == "" || loginBody.password == "") {
-      alert("Please enter a username and password!");
+      setError("Please enter a username and password!");
       return;
     }
     callLogin(JSON.stringify(parsedLoginBody.data));
@@ -58,6 +70,12 @@ const Login = () => {
             onChange={event => setLoginBody({ ...loginBody, password: event.target.value })}
           />
         </FormControl>
+        <HStack>
+          <Text>Don&apos;t have an account? </Text>
+          <Link to="/register">
+            <Text textDecoration="underline">Create Account</Text>
+          </Link>
+        </HStack>
         <FormControl display="flex" justifyContent="center">
           <Button
             isLoading={loginLoading}
@@ -70,6 +88,9 @@ const Login = () => {
             Login
           </Button>
         </FormControl>
+        <Box height="1rem">
+          <Text textColor="red">{error}</Text>
+        </Box>
       </VStack>
     </Box>
   );

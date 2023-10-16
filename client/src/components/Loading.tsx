@@ -9,8 +9,8 @@ const Loading = () => {
   return (
     <Suspense
       fallback={
-        <Box bg="#156087" display="flex" minH="calc(100vh)">
-          <CircularProgress isIndeterminate color="white" m="auto" />
+        <Box bg="#156087" display="flex" minH="100vh">
+          <CircularProgress isIndeterminate color="orange" m="auto" />
         </Box>
       }
     >

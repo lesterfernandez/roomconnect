@@ -11,7 +11,36 @@ import { useProfileStore } from "./store.ts";
 import { getToken } from "./token.ts";
 
 const implicitLogin = async () => {
-  const profile = useProfileStore.getState();
+  return new Promise((resolve, reject) => {
+    setTimeout(async () => {
+      try {
+        const profile = useProfileStore.getState();
+        if (profile.displayName !== "") resolve("Logged in");
+
+        const token = getToken();
+        if (!token) throw new Error("No such token");
+
+        const response = await fetch("localhost:8080/implicit_login", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const parsedResponse = userProfileSchema.safeParse(response.json());
+        if (!parsedResponse.success) throw new Error("Unable to make implicit login");
+
+        if ("errorMessage" in parsedResponse.data) throw new Error("Error");
+
+        useProfileStore.setState(parsedResponse.data);
+        resolve("Implicit login completed");
+      } catch (error) {
+        reject(error);
+      }
+    }, 500);
+  });
+
+  /* const profile = useProfileStore.getState();
   if (profile.displayName !== "") return null;
 
   const token = getToken();
@@ -26,18 +55,12 @@ const implicitLogin = async () => {
   });
 
   const parsedResponse = userProfileSchema.safeParse(response.json());
-  if (!parsedResponse.success) {
-    // return redirect("/login");
-    throw new Error("Unable to make implicit login");
-  }
+  if (!parsedResponse.success) throw new Error("Unable to make implicit login");
 
-  if ("errorMessage" in parsedResponse.data) {
-    //  return redirect("/login");
-    throw new Error("Error");
-  }
+  if ("errorMessage" in parsedResponse.data) throw new Error("Error");
 
   useProfileStore.setState(parsedResponse.data);
-  return;
+  return; */
 };
 
 const router = createBrowserRouter([

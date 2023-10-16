@@ -3,28 +3,14 @@ package data
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/jackc/pgx/v5"
 )
 
-var searchFields = map[string]string{
-	"budget":      "budget_tier",
-	"cleanliness": "clean_tier",
-	"gender":      "gender",
-	"coed":        "coed",
-	"loudness":    "loudness",
-}
+func SearchUsers(queryFields [][2]string) []*UserProfile {
+	var queryValues []any
 
-func SearchUsers(field string, query string) []*UserProfile {
-	searchField, ok := searchFields[strings.ToLower(field)]
-
-	if !ok {
-		fmt.Println("Invalid field!")
-		return []*UserProfile{}
-	}
-
-	sqlQuery := fmt.Sprintf(`
+	sqlQuery := `
 		SELECT 	display_name,
 				gender,
 				profile_pic,
@@ -33,20 +19,36 @@ func SearchUsers(field string, query string) []*UserProfile {
 				loud_tier,
 				coed
 		FROM users
-		WHERE %s=$1
-		`, searchField)
+		`
 
-	rows, err := db.Query(context.Background(), sqlQuery, &query)
+	// Add AND WHERE clauses in SQL string
+	for idx, slice := range queryFields {
+		field := slice[0]
+		value := slice[1]
 
-	if err != nil {
-		fmt.Println("Error searching for users in field:", searchField, "query:", query)
+		// build clauses dynamically
+		clause := "WHERE"
+		if idx > 0 {
+			clause = "AND"
+		}
+
+		sqlQuery += fmt.Sprintf("%s %s=$%d ", clause, field, idx+1)
+
+		// store values in order
+		queryValues = append(queryValues, value)
 	}
 
-	usersFound, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByName[UserProfile])
+	// spread values in order into query function
+	rows, err := db.Query(context.Background(), sqlQuery, queryValues...)
 
 	if err != nil {
-		fmt.Println("Error collecting rows in SearchUsers. query:", query, "field:", searchField, "Error:", err.Error())
+		fmt.Println("Error searching for users in field. Error:", err.Error())
+	}
 
+	usersFound, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[UserProfile])
+
+	if err != nil {
+		fmt.Println("Error collecting rows in SearchUsers. Error:", err.Error())
 		return []*UserProfile{}
 	}
 

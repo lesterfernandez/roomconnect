@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import { Await, useLoaderData } from "react-router-dom";
+import { Await, useLoaderData, Outlet, Navigate } from "react-router-dom";
 import { Box, CircularProgress } from "@chakra-ui/react";
-import { Login } from "./pages";
 
 const Loading = () => {
   const data = useLoaderData() as { response: null };
@@ -14,8 +13,8 @@ const Loading = () => {
         </Box>
       }
     >
-      <Await resolve={data.response} errorElement={<Login />}>
-        {() => <p>Hello</p>}
+      <Await resolve={data.response} errorElement={<Navigate to="/login" />}>
+        {() => <Outlet />}
       </Await>
     </Suspense>
   );

@@ -11,46 +11,48 @@ import { useProfileStore } from "./store.ts";
 import { getToken } from "./token.ts";
 
 const implicitLogin = async () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(async () => {
-      try {
-        const profile = useProfileStore.getState();
-        if (profile.displayName !== "") resolve("Logged in");
+  try {
+    const profile = useProfileStore.getState();
+    if (profile.displayName !== "") Promise.resolve("Logged in");
 
-        const token = getToken();
-        if (!token) throw new Error("No such token");
+    const token = getToken();
+    if (!token) throw new Error("No such token");
 
-        const response = await fetch("localhost:8080/implicit_login", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    const response = await fetch("localhost:8080/implicit_login", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-        const parsedResponse = userProfileSchema.safeParse(response.json());
-        if (!parsedResponse.success) throw new Error("Unable to make implicit login");
+    const parsedResponse = userProfileSchema.safeParse(response.json());
+    if (!parsedResponse.success) throw new Error("Unable to make implicit login");
 
-        if ("errorMessage" in parsedResponse.data) throw new Error("Error");
+    if ("errorMessage" in parsedResponse.data) throw new Error("Error");
 
-        useProfileStore.setState(parsedResponse.data);
-        resolve("Implicit login completed");
-      } catch (error) {
-        reject(error);
-      }
-    }, 500);
-  });
+    useProfileStore.setState(parsedResponse.data);
+    Promise.resolve("Implicit login completed");
+  } catch (error) {
+    Promise.reject(error);
+  }
 };
 
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: async () => {
-      const implicitLoginPromise = implicitLogin();
-      return defer({
-        response: implicitLoginPromise,
-      });
-    },
+    loader: () => defer({ response: implicitLogin() }),
     element: <Loading />,
+    children: [
+      {
+        path: "/profile",
+        element: <EditProfile />,
+      },
+      {
+        path: "/search",
+        index: true,
+        element: <Search />,
+      },
+    ],
     errorElement: <NotFound />,
   },
   {
@@ -60,14 +62,6 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
-  },
-  {
-    path: "/profile",
-    element: <EditProfile />,
-  },
-  {
-    path: "/search",
-    element: <Search />,
   },
 ]);
 

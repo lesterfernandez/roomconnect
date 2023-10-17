@@ -13,10 +13,10 @@ import { getToken } from "./token.ts";
 const implicitLogin = async () => {
   try {
     const profile = useProfileStore.getState();
-    if (profile.displayName !== "") Promise.resolve("Logged in");
+    if (profile.displayName !== "") return null;
 
     const token = getToken();
-    if (!token) throw new Error("No such token");
+    if (!token) throw new Error("Token doesn't exist");
 
     const response = await fetch("localhost:8080/implicit_login", {
       method: "GET",
@@ -31,9 +31,9 @@ const implicitLogin = async () => {
     if ("errorMessage" in parsedResponse.data) throw new Error("Error");
 
     useProfileStore.setState(parsedResponse.data);
-    Promise.resolve("Implicit login completed");
+    return null;
   } catch (error) {
-    Promise.reject(error);
+    console.log(error);
   }
 };
 

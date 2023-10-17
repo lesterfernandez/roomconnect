@@ -57,9 +57,10 @@ func CreateUser(newUser RegisterBody) error {
             clean_tier, 
             budget_tier, 
             loud_tier, 
-            coed
+            coed,
+			profile_pic
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
 		newUser.Username,
 		passhash,
 		newUser.DisplayName,
@@ -67,7 +68,8 @@ func CreateUser(newUser RegisterBody) error {
 		newUser.Cleanliness,
 		newUser.Budget,
 		newUser.Loudness,
-		newUser.Coed)
+		newUser.Coed,
+		newUser.ProfilePic)
 
 	if err != nil && !tag.Insert() {
 		fmt.Println("Error while creating user: ", err.Error())

@@ -8,15 +8,32 @@ import (
 	"github.com/lesterfernandez/roommate-finder/server/data"
 )
 
-func SearchUsers(w http.ResponseWriter, res *http.Request) {
-	field := res.URL.Query().Get("field")
-	query := res.URL.Query().Get("query")
+var searchFields = map[string]string{
+	"budget":      "budget_tier",
+	"cleanliness": "clean_tier",
+	"gender":      "gender",
+	"coed":        "coed",
+	"loudness":    "loudness",
+}
 
-	if len(field) == 0 || len(query) == 0 {
-		respondWithError(w, "Field/Query missing", http.StatusBadRequest)
+func SearchUsers(w http.ResponseWriter, res *http.Request) {
+	queryFields := [][2]string{}
+
+	order := [...]string{
+		"budget",
+		"cleanliness",
+		"gender",
+		"coed",
+		"loudness"}
+
+	for _, field := range order {
+		queryValue := res.URL.Query().Get(field)
+		if queryValue != "" {
+			queryFields = append(queryFields, [2]string{searchFields[field], queryValue})
+		}
 	}
 
-	users := data.SearchUsers(field, query)
+	users := data.SearchUsers(queryFields)
 
 	usersJson, err := json.Marshal(users)
 

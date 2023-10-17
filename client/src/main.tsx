@@ -11,30 +11,25 @@ import { useProfileStore } from "./store.ts";
 import { getToken } from "./token.ts";
 
 const implicitLogin = async () => {
-  try {
-    const profile = useProfileStore.getState();
-    if (profile.displayName !== "") return null;
+  const profile = useProfileStore.getState();
+  if (profile.displayName !== "") return null;
 
-    const token = getToken();
-    if (!token) throw new Error("Token doesn't exist");
+  const token = getToken();
+  if (!token) throw new Error("Token doesn't exist");
 
-    const response = await fetch("localhost:8080/implicit_login", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/implicit_login`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    const parsedResponse = userProfileSchema.safeParse(response.json());
-    if (!parsedResponse.success) throw new Error("Unable to make implicit login");
+  const parsedResponse = userProfileSchema.parse(response.json());
 
-    if ("errorMessage" in parsedResponse.data) throw new Error("Error");
+  if ("errorMessage" in parsedResponse) throw new Error("Error");
 
-    useProfileStore.setState(parsedResponse.data);
-    return null;
-  } catch (error) {
-    console.log(error);
-  }
+  useProfileStore.setState(parsedResponse);
+  return null;
 };
 
 const router = createBrowserRouter([

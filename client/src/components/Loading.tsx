@@ -3,7 +3,7 @@ import { Await, useLoaderData, Outlet, Navigate } from "react-router-dom";
 import { Box, CircularProgress } from "@chakra-ui/react";
 
 const Loading = () => {
-  const data = useLoaderData() as { response: null };
+  const data = useLoaderData() as { response: Promise<null> };
 
   return (
     <Suspense

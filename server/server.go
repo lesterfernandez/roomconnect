@@ -16,10 +16,10 @@ func main() {
 	dotEnvErr := godotenv.Load(".env")
 
 	if dotEnvErr != nil {
-		dotEnvTemplateErr := godotenv.Load(".env.template")
+		dotEnvErr = godotenv.Load(".env.template")
 	}
 
-	if dotEnvTemplateErr != nil {
+	if dotEnvErr != nil {
 		log.Fatal(".env and .env.template files not found!")
 	}
 

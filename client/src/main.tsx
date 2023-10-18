@@ -1,41 +1,33 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Login, Register, Loading, NotFound, EditProfile, Search } from "./components/pages";
+// Import pages
+import Login from "./components/pages/Login";
+import Register from "./components/pages/Register";
+import EditProfile from "./components/pages/EditProfile";
+import Search from "./components/pages/Search";
+import NotFound from "./components/pages/NotFound";
 
-import { createBrowserRouter, RouterProvider, redirect, Outlet } from "react-router-dom";
-
+import { createBrowserRouter, RouterProvider, defer } from "react-router-dom";
+import { Loading, handleImplicitLogin } from "./components/Loading";
 import { ChakraProvider } from "@chakra-ui/react";
-import { userProfileSchema } from "./schemas.ts";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: async () => {
-      const token = localStorage.getItem("token") ?? null;
-
-      try {
-        if (!token) throw new Error("No such token");
-
-        const response = await fetch("localhost:8080/implicit_login", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const parsedResponse = userProfileSchema.safeParse(response.json());
-        if (!parsedResponse.success) {
-          console.log("Unable to make implicit login");
-          return redirect("/login");
-        }
-        return <Outlet />;
-      } catch (error) {
-        console.log("Unexpected error");
-        return redirect("/login");
-      }
-    },
+    loader: () => defer({ response: handleImplicitLogin() }),
     element: <Loading />,
+    children: [
+      {
+        path: "/profile",
+        element: <EditProfile />,
+      },
+      {
+        path: "/search",
+        index: true,
+        element: <Search />,
+      },
+    ],
     errorElement: <NotFound />,
   },
   {
@@ -45,14 +37,6 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
-  },
-  {
-    path: "/profile",
-    element: <EditProfile />,
-  },
-  {
-    path: "/search",
-    element: <Search />,
   },
 ]);
 

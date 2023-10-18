@@ -20,5 +20,5 @@ func (u *UserTestRepo) UserExists(username string) bool {
 }
 
 func (u *UserTestRepo) IsValidLogin(password string) bool {
-	return u.IsValidLogin(password)
+	return u.IsValidLoginMock(password)
 }

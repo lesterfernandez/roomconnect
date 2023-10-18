@@ -1,6 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Login, Register, NotFound, EditProfile, Search } from "./components/pages";
+
+// Import pages
+import Login from "./components/pages/Login";
+import Register from "./components/pages/Register";
+import EditProfile from "./components/pages/EditProfile";
+import Search from "./components/pages/Search";
+import NotFound from "./components/pages/NotFound";
+
 import { createBrowserRouter, RouterProvider, defer } from "react-router-dom";
 import { Loading, handleImplicitLogin } from "./components/Loading";
 import { ChakraProvider } from "@chakra-ui/react";

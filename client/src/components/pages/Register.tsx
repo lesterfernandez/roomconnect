@@ -19,6 +19,7 @@ import { RegisterBody } from "../../types";
 import { registerBodySchema, tokenMessageSchema } from "../../schemas";
 import { Link } from "react-router-dom";
 import { setToken } from "../../token";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -34,6 +35,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
@@ -74,6 +76,7 @@ const Register = () => {
       }
 
       setToken(parsedTokenMessage.data.token);
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

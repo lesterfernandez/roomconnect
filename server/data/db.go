@@ -16,7 +16,7 @@ func Connect() {
 	password := os.getEnv("POSTGRES_PASSWORD")
 	host := os.getEnv("POSTGRES_HOST")
 	port := os.getEnv("POSTGRES_PORT")
-	user1 := os.getEnv("POSTGRES_USER")
+	user := os.getEnv("POSTGRES_USER")
 
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
 	fmt.Println("Connecting to database URI:", connectionString)

@@ -12,11 +12,11 @@ var db *pgxpool.Pool
 
 func Connect() {
 
-	name := getEnv("POSTGRES_DB", "db")
-	password := getEnv("POSTGRES_PASSWORD", "pass")
-	host := getEnv("POSTGRES_HOST", "host")
-	port := getEnv("POSTGRES_PORT", "5000")
-	user := getEnv("POSTGRES_USER", "user")
+	name := os.getEnv("POSTGRES_DB")
+	password := os.getEnv("POSTGRES_PASSWORD")
+	host := os.getEnv("POSTGRES_HOST")
+	port := os.getEnv("POSTGRES_PORT")
+	user := os.getEnv("POSTGRES_USER")
 
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
 	fmt.Println("Connecting to database URI:", connectionString)
@@ -35,12 +35,4 @@ func Connect() {
 
 func Close() {
 	db.Close()
-}
-
-// Function to set default env values, if they don't exist
-func getEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return fallback
 }

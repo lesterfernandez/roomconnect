@@ -16,7 +16,11 @@ func main() {
 	dotEnvErr := godotenv.Load(".env")
 
 	if dotEnvErr != nil {
-		log.Fatal(".env file not found!")
+		dotEnvTemplateErr := godotenv.Load(".env.template")
+	}
+
+	if dotEnvTemplateErr != nil {
+		log.Fatal(".env and .env.template files not found!")
 	}
 
 	r := chi.NewRouter()

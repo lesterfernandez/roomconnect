@@ -21,13 +21,13 @@ type RegisterBody struct {
 }
 
 type UserProfile struct {
-	ProfilePic  string `db:"profile_pic"`
-	DisplayName string `db:"display_name"`
-	Budget      int    `db:"budget_tier"`
-	Gender      string `db:"gender"`
-	Cleanliness int    `db:"clean_tier"`
-	Loudness    int    `db:"loud_tier"`
-	Coed        bool   `db:"coed"`
+	ProfilePic  string `db:"profile_pic" json:"profilePic"`
+	DisplayName string `db:"display_name" json:"displayName"`
+	Budget      int    `db:"budget_tier" json:"budget"`
+	Gender      string `db:"gender" json:"gender"`
+	Cleanliness int    `db:"clean_tier" json:"cleanliness"`
+	Loudness    int    `db:"loud_tier" json:"loudness"`
+	Coed        bool   `db:"coed" json:"coed"`
 }
 
 type UserCredentials struct {

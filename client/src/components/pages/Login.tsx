@@ -11,43 +11,57 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { UserCredentials } from "../../types";
-import { userCredentialsSchema } from "../../schemas";
+import { userCredentialsSchema, tokenMessageSchema } from "../../schemas";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { setToken } from "../../token";
 
 const Login = () => {
-  async function callLogin(data: string) {
+  const [userCredentials, setUserCredentials] = useState<UserCredentials>({
+    username: "",
+    password: "",
+  });
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    const parsedUserCredentials = userCredentialsSchema.safeParse(userCredentials);
+    if (!parsedUserCredentials.success) {
+      setError("Please enter a username and password.");
+      return;
+    }
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: data,
+        body: JSON.stringify(parsedUserCredentials.data),
       });
-      const result = await response.json();
-      console.log(result.tokenMessage);
+
+      if (response.status === 401) {
+        setError("Invalid username or password.");
+      }
+
+      if (!response.ok) {
+        setError("Server Error.");
+        return;
+      }
+
+      const tokenMessage = await response.json();
+      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
+      if (!parsedTokenMessage.success) {
+        setError("Server Error.");
+        return;
+      }
+
+      setToken(parsedTokenMessage.data.token);
+      navigate("/");
     } catch (error) {
       console.error(error);
     }
-  }
-  const [loginBody, setLoginBody] = useState<UserCredentials>({
-    username: "",
-    password: "",
-  });
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleLogin = async () => {
-    const parsedLoginBody = userCredentialsSchema.safeParse(loginBody);
-    if (!parsedLoginBody.success) {
-      setError("Login import failed!");
-      return;
-    }
-    if (loginBody.username == "" || loginBody.password == "") {
-      setError("Please enter a username and password!");
-      return;
-    }
-    callLogin(JSON.stringify(parsedLoginBody.data));
   };
 
   return (
@@ -58,16 +72,20 @@ const Login = () => {
           <FormLabel>Username</FormLabel>
           <Input
             type="text"
-            value={loginBody.username}
-            onChange={event => setLoginBody({ ...loginBody, username: event.target.value })}
+            value={userCredentials.username}
+            onChange={event =>
+              setUserCredentials({ ...userCredentials, username: event.target.value })
+            }
           />
         </FormControl>
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
             type="password"
-            value={loginBody.password}
-            onChange={event => setLoginBody({ ...loginBody, password: event.target.value })}
+            value={userCredentials.password}
+            onChange={event =>
+              setUserCredentials({ ...userCredentials, password: event.target.value })
+            }
           />
         </FormControl>
         <HStack>

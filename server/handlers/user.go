@@ -68,7 +68,7 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 
 	//if username/password mismatch or don't exist, throw error
 	if !found {
-		respondWithError(w, "Incorrect Username or Password", http.StatusBadRequest)
+		respondWithError(w, "Incorrect Username or Password", http.StatusUnauthorized)
 		return
 	}
 
@@ -89,8 +89,7 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 
 func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 	headers := res.Header
-	authHeader := headers.Get("Authentication")
-
+	authHeader := headers.Get("Authorization")
 	//Check if the Auth Header has valid format
 	if !strings.Contains(authHeader, " ") {
 		respondWithError(w, "Unauthorized Response", http.StatusUnauthorized)
@@ -106,7 +105,6 @@ func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 	}
 
 	//Send 200 OK http Status
-	w.WriteHeader(http.StatusOK)
 	fmt.Printf("Claims: %v\n", token.Claims)
 
 	//Respond with RegisterBody JSON
@@ -114,9 +112,8 @@ func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 	subject, _ := token.Claims.GetSubject()
 	foundUser := data.GetUser(subject)
 
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(foundUser)
-	// fmt.Println(*foundUser)
-
 }
 
 //Utility Functions ========================================================================================

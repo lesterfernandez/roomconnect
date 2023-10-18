@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	dotEnvErr := godotenv.Load(".env")
+	dotEnvErr := godotenv.Load()
 
 	if dotEnvErr != nil {
 		dotEnvErr = godotenv.Load(".env.template")
@@ -29,8 +29,6 @@ func main() {
 		AllowedOrigins:   []string{"http://localhost:5173"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
-		// Enable Debugging for testing, consider disabling in production
-		Debug: true,
 	})
 
 	r.Use(c.Handler)

@@ -25,7 +25,7 @@ const handleImplicitLogin = async () => {
 };
 
 const Loading = () => {
-  const data = useLoaderData() as { response: Promise<null> };
+  const data = useLoaderData() as { response: ReturnType<typeof handleImplicitLogin> };
 
   return (
     <Suspense

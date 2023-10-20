@@ -7,7 +7,7 @@ import { getToken } from "../token.ts";
 
 const handleImplicitLogin = async () => {
   const profile = useProfileStore.getState();
-  if (profile.displayName !== "") return null;
+  if (profile.displayName !== "") return;
 
   const token = getToken();
   if (!token) throw new Error("Token doesn't exist");
@@ -18,16 +18,14 @@ const handleImplicitLogin = async () => {
     },
   });
 
-  const parsedResponse = userProfileSchema.parse(response.json());
-
+  const parsedResponse = userProfileSchema.parse(await response.json());
   if ("errorMessage" in parsedResponse) throw new Error("Error");
 
   useProfileStore.setState(parsedResponse);
-  return null;
 };
 
 const Loading = () => {
-  const data = useLoaderData() as { response: Promise<null> };
+  const data = useLoaderData() as { response: ReturnType<typeof handleImplicitLogin> };
 
   return (
     <Suspense

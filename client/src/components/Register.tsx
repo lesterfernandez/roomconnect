@@ -16,10 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../types";
-import { registerBodySchema, tokenMessageSchema } from "../schemas";
-import { Link } from "react-router-dom";
-import { setToken } from "../token";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { handleRegister } from "../api";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -35,9 +33,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  /* const handleRegister = async () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
     if (!parsedRegisterBody.success) {
       setError("Invalid form.");
@@ -80,7 +77,7 @@ const Register = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }; */
 
   return (
     <Box bg="#156087">
@@ -280,7 +277,12 @@ const Register = () => {
             colorScheme="orange"
             onClick={() => {
               setRegisterLoading(true);
-              handleRegister().then(() => setRegisterLoading(false));
+              handleRegister(registerBody, confirmPassword)
+                .then(() => <Navigate to="/" />)
+                .catch(error => {
+                  setRegisterLoading(false);
+                  setError(error.message);
+                });
             }}
           >
             Register

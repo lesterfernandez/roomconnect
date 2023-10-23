@@ -4,6 +4,7 @@ import { Box, CircularProgress } from "@chakra-ui/react";
 import { userProfileSchema } from "../schemas.ts";
 import { useProfileStore } from "../store.ts";
 import { getToken } from "../token.ts";
+import Layout from "./Layout.tsx";
 
 export const loader = () => defer({ response: handleImplicitLogin() });
 
@@ -39,7 +40,11 @@ const Root = () => {
       }
     >
       <Await resolve={data.response} errorElement={<Navigate to="/login" />}>
-        {() => <Outlet />}
+        {() => (
+          <Layout>
+            <Outlet />
+          </Layout>
+        )}
       </Await>
     </Suspense>
   );

@@ -9,7 +9,7 @@ import (
 	"github.com/lesterfernandez/roommate-finder/server/token"
 )
 
-func registerUser(w http.ResponseWriter, res *http.Request) {
+func (s *Server) registerUser(w http.ResponseWriter, res *http.Request) {
 	newUser := data.RegisterBody{}
 	decodeErr := json.NewDecoder(res.Body).Decode(&newUser)
 
@@ -18,12 +18,12 @@ func registerUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	if data.UserExists(newUser.Username) {
+	if s.User.UserExists(newUser.Username) {
 		respondWithError(w, "User already exists", http.StatusConflict)
 		return
 	}
 
-	err := data.CreateUser(newUser)
+	err := s.User.CreateUser(newUser)
 	if err != nil {
 		respondWithError(w, "Error creating user", http.StatusInternalServerError)
 		return
@@ -38,7 +38,7 @@ func registerUser(w http.ResponseWriter, res *http.Request) {
 	token.SendJWT(w, jwtToken)
 }
 
-func loginUser(w http.ResponseWriter, res *http.Request) {
+func (s *Server) loginUser(w http.ResponseWriter, res *http.Request) {
 	returningUser := data.UserCredentials{}
 	err := json.NewDecoder(res.Body).Decode(&returningUser)
 	if err != nil {
@@ -46,7 +46,7 @@ func loginUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	if found := data.IsValidLogin(returningUser.Username, returningUser.Password); !found {
+	if found := s.User.IsValidLogin(returningUser.Username, returningUser.Password); !found {
 		respondWithError(w, "Incorrect Username or Password", http.StatusUnauthorized)
 		return
 	}
@@ -61,7 +61,7 @@ func loginUser(w http.ResponseWriter, res *http.Request) {
 
 }
 
-func loginImplicitly(w http.ResponseWriter, res *http.Request) {
+func (s *Server) loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	headers := res.Header
 	authHeader := headers.Get("Authorization")
 
@@ -81,7 +81,7 @@ func loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	}
 
 	subject, _ := token.Claims.GetSubject()
-	foundUser := data.GetUser(subject)
+	foundUser := s.User.GetUser(subject)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(foundUser)

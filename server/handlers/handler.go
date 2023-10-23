@@ -9,7 +9,11 @@ import (
 	"github.com/rs/cors"
 )
 
-func CreateHandler() http.Handler {
+type Server struct {
+	User *data.UserRepo
+}
+
+func CreateHandler(s *Server) http.Handler {
 	r := chi.NewRouter()
 
 	c := cors.New(cors.Options{
@@ -20,9 +24,9 @@ func CreateHandler() http.Handler {
 
 	r.Use(c.Handler)
 
-	r.Post("/register", registerUser)
-	r.Post("/login", loginUser)
-	r.Get("/implicit_login", loginImplicitly)
+	r.Post("/register", s.registerUser)
+	r.Post("/login", s.loginUser)
+	r.Get("/implicit_login", s.loginImplicitly)
 	r.Get("/search", searchUsers)
 
 	return r

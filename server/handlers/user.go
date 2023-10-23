@@ -9,7 +9,7 @@ import (
 	"github.com/lesterfernandez/roommate-finder/server/token"
 )
 
-func RegisterUser(w http.ResponseWriter, res *http.Request) {
+func registerUser(w http.ResponseWriter, res *http.Request) {
 	newUser := data.RegisterBody{}
 	decodeErr := json.NewDecoder(res.Body).Decode(&newUser)
 
@@ -38,7 +38,7 @@ func RegisterUser(w http.ResponseWriter, res *http.Request) {
 	token.SendJWT(w, jwtToken)
 }
 
-func LoginUser(w http.ResponseWriter, res *http.Request) {
+func loginUser(w http.ResponseWriter, res *http.Request) {
 	returningUser := data.UserCredentials{}
 	err := json.NewDecoder(res.Body).Decode(&returningUser)
 	if err != nil {
@@ -61,7 +61,7 @@ func LoginUser(w http.ResponseWriter, res *http.Request) {
 
 }
 
-func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
+func loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	headers := res.Header
 	authHeader := headers.Get("Authorization")
 
@@ -85,11 +85,4 @@ func HandleImplicitLogin(w http.ResponseWriter, res *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(foundUser)
-}
-
-func respondWithError(w http.ResponseWriter, msg string, code int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(data.ApiError{ErrorMessage: msg})
-
 }

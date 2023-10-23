@@ -20,10 +20,13 @@ func Connect() {
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
 	fmt.Println("Connecting to database URI:", connectionString)
 
-	var err error
-	db, err = pgxpool.New(context.Background(), connectionString)
+	pool, err := pgxpool.New(context.Background(), connectionString)
 
-	db.Ping(context.Background())
+	if err != nil {
+		panic("Error while creating pool: " + err.Error())
+	}
+
+	err = pool.Ping(context.Background())
 
 	if err != nil {
 		panic("Error while connecting: " + err.Error())

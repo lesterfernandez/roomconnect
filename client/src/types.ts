@@ -21,4 +21,11 @@ export interface UserCredentials {
   password: string;
 }
 
+export interface SearchBody {
+  budget: number;
+  cleanliness: string;
+  loudness: string;
+  coed: string;
+}
+
 export type RegisterBody = UserCredentials & UserProfile;

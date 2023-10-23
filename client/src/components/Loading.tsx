@@ -5,9 +5,9 @@ import { userProfileSchema } from "../schemas.ts";
 import { useProfileStore } from "../store.ts";
 import { getToken } from "../token.ts";
 
-const handleImplicitLogin = async () => {
+const handleImplicitLogin = async (): Promise<null> => {
   const profile = useProfileStore.getState();
-  if (profile.displayName !== "") return;
+  if (profile.displayName !== "") return null;
 
   const token = getToken();
   if (!token) throw new Error("Token doesn't exist");
@@ -22,6 +22,7 @@ const handleImplicitLogin = async () => {
   if ("errorMessage" in parsedResponse) throw new Error("Error");
 
   useProfileStore.setState(parsedResponse);
+  return null;
 };
 
 const Loading = () => {

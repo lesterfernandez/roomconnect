@@ -2,21 +2,22 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 // Import pages
-import Login from "./components/pages/Login";
-import Register from "./components/pages/Register";
-import EditProfile from "./components/pages/EditProfile";
-import Search from "./components/pages/Search";
-import NotFound from "./components/pages/NotFound";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import EditProfile from "./components/EditProfile";
+import Search from "./components/Search";
+import NotFound from "./components/NotFound";
 
-import { createBrowserRouter, RouterProvider, defer } from "react-router-dom";
-import { Loading, handleImplicitLogin } from "./components/Loading";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Root, loader as rootLoader } from "./components/Root";
 import { ChakraProvider } from "@chakra-ui/react";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    loader: () => defer({ response: handleImplicitLogin() }),
-    element: <Loading />,
+    loader: rootLoader,
+    element: <Root />,
+    shouldRevalidate: () => false,
     children: [
       {
         path: "/profile",

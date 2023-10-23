@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -18,7 +19,8 @@ func registerUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	if data.UserExists(newUser.Username) {
+	if exists, existsErr := data.UserExists(newUser.Username); !exists {
+		fmt.Println("Error while checking for existing user", existsErr.Error())
 		respondWithError(w, "User already exists", http.StatusConflict)
 		return
 	}
@@ -46,7 +48,8 @@ func loginUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	if found := data.IsValidLogin(returningUser.Username, returningUser.Password); !found {
+	if found, foundErr := data.IsValidLogin(returningUser.Username, returningUser.Password); !found {
+		fmt.Println("Error while authenticating user.", foundErr.Error())
 		respondWithError(w, "Incorrect Username or Password", http.StatusUnauthorized)
 		return
 	}

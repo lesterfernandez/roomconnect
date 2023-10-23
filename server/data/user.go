@@ -44,7 +44,7 @@ func CreateUser(newUser RegisterBody) error {
 	passhash, hashError := HashPassword(newUser.Password)
 
 	if hashError != nil {
-		fmt.Println("Error hashing password for user:", newUser.Username)
+		return hashError
 	}
 
 	tag, err := db.Exec(context.Background(),
@@ -72,11 +72,8 @@ func CreateUser(newUser RegisterBody) error {
 		newUser.ProfilePic)
 
 	if err != nil && !tag.Insert() {
-		fmt.Println("Error while creating user: ", err.Error())
 		return err
 	}
-
-	fmt.Println("Successfully created user:", newUser.Username)
 
 	return nil
 }
@@ -104,33 +101,30 @@ func GetUser(username string) UserProfile {
 	return *userProfile
 }
 
-func UserExists(username string) bool {
+func UserExists(username string) (bool, error) {
 	var count int
 	err := db.QueryRow(context.Background(), "SELECT COUNT(*) FROM users WHERE username=$1", username).Scan(&count)
 
 	if err != nil {
-		fmt.Println("Error while checking for existing user", err.Error())
-		return false
+		return false, err
 	}
 
-	return count == 1
+	return count == 1, nil
 }
 
-func IsValidLogin(username string, password string) bool {
+func IsValidLogin(username string, password string) (bool, error) {
 	var passhash string
 
 	queryErr := db.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 
 	if queryErr != nil {
-		fmt.Println("Error querying for user:", username, ".", queryErr.Error())
-		return false
+		return false, queryErr
 	}
 
 	compareError := bcrypt.CompareHashAndPassword([]byte(passhash), []byte(password))
 	if compareError != nil {
-		fmt.Println("Error: Password is not correct.", compareError.Error())
-		return false
+		return false, compareError
 	}
 
-	return true
+	return true, nil
 }

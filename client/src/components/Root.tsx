@@ -1,9 +1,11 @@
 import { Suspense } from "react";
-import { Await, useLoaderData, Outlet, Navigate } from "react-router-dom";
+import { Await, useLoaderData, Outlet, Navigate, defer } from "react-router-dom";
 import { Box, CircularProgress } from "@chakra-ui/react";
 import { userProfileSchema } from "../schemas.ts";
 import { useProfileStore } from "../store.ts";
 import { getToken } from "../token.ts";
+
+export const loader = () => defer({ response: handleImplicitLogin() });
 
 const handleImplicitLogin = async (): Promise<null> => {
   const profile = useProfileStore.getState();
@@ -25,7 +27,7 @@ const handleImplicitLogin = async (): Promise<null> => {
   return null;
 };
 
-const Loading = () => {
+const Root = () => {
   const data = useLoaderData() as { response: ReturnType<typeof handleImplicitLogin> };
 
   return (
@@ -43,4 +45,4 @@ const Loading = () => {
   );
 };
 
-export { Loading, handleImplicitLogin };
+export { Root, handleImplicitLogin };

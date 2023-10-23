@@ -10,11 +10,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { UserCredentials } from "../../types";
-import { userCredentialsSchema, tokenMessageSchema } from "../../schemas";
+import { UserCredentials } from "../types";
+import { userCredentialsSchema, tokenMessageSchema } from "../schemas";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "../../token";
+import { setToken } from "../token";
 
 const Login = () => {
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({

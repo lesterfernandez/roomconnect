@@ -14,9 +14,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { UserProfile } from "../../types";
-import { userProfileSchema } from "../../schemas";
-import { useProfileStore } from "../../store";
+import { UserProfile } from "../types";
+import { userProfileSchema } from "../schemas";
+import { useProfileStore } from "../store";
 
 export default function EditProfile() {
   const user = useProfileStore();

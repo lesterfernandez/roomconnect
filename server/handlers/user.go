@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 )
 
 func (s *Server) registerUser(w http.ResponseWriter, res *http.Request) {
+
 	newUser := data.RegisterBody{}
 	decodeErr := json.NewDecoder(res.Body).Decode(&newUser)
 

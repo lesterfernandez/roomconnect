@@ -15,10 +15,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { RegisterBody } from "../../types";
-import { registerBodySchema, tokenMessageSchema } from "../../schemas";
+import { RegisterBody } from "../types";
+import { registerBodySchema, tokenMessageSchema } from "../schemas";
 import { Link } from "react-router-dom";
-import { setToken } from "../../token";
+import { setToken } from "../token";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {

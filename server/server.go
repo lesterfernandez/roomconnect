@@ -28,6 +28,7 @@ func main() {
 
 	customHandler := handlers.CreateHandler(&s)
 
+
 	data.Connect()
 	defer data.Close()
 

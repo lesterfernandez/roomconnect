@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/lesterfernandez/roommate-finder/server/data"
@@ -33,13 +32,16 @@ func searchUsers(w http.ResponseWriter, res *http.Request) {
 		}
 	}
 
-	users := data.SearchUsers(queryFields)
+	users, usersErr := data.SearchUsers(queryFields)
+
+	if usersErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 
 	usersJson, err := json.Marshal(users)
 
 	if err != nil {
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-		fmt.Println("SearchUsers", err.Error())
 		return
 	}
 	w.Write(usersJson)

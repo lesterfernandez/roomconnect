@@ -18,7 +18,7 @@ func SendJWT(w http.ResponseWriter, jwt string) {
 }
 
 func CreateJWT(username string) (string, error) {
-	expirationTime := time.Now().Add(time.Minute * 1)
+	expirationTime := time.Now().Add(time.Hour * 48)
 
 	claims := &jwt.RegisteredClaims{
 		Subject:   username,

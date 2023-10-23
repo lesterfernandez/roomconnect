@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func SearchUsers(queryFields [][2]string) []*UserProfile {
+func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
 	var queryValues []any
 
 	sqlQuery := `
@@ -42,15 +42,14 @@ func SearchUsers(queryFields [][2]string) []*UserProfile {
 	rows, err := db.Query(context.Background(), sqlQuery, queryValues...)
 
 	if err != nil {
-		fmt.Println("Error searching for users in field. Error:", err.Error())
+		return []*UserProfile{}, err
 	}
 
 	usersFound, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[UserProfile])
 
 	if err != nil {
-		fmt.Println("Error collecting rows in SearchUsers. Error:", err.Error())
-		return []*UserProfile{}
+		return []*UserProfile{}, err
 	}
 
-	return usersFound
+	return usersFound, nil
 }

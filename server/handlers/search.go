@@ -16,7 +16,7 @@ var searchFields = map[string]string{
 	"loudness":    "loudness",
 }
 
-func SearchUsers(w http.ResponseWriter, res *http.Request) {
+func searchUsers(w http.ResponseWriter, res *http.Request) {
 	queryFields := [][2]string{}
 
 	order := [...]string{

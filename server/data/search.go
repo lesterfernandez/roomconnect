@@ -42,13 +42,13 @@ func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
 	rows, err := db.Query(context.Background(), sqlQuery, queryValues...)
 
 	if err != nil {
-		return []*UserProfile{}, err
+		return nil, err
 	}
 
 	usersFound, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[UserProfile])
 
 	if err != nil {
-		return []*UserProfile{}, err
+		return nil, err
 	}
 
 	return usersFound, nil

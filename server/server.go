@@ -24,7 +24,10 @@ func main() {
 		log.Fatal(".env and .env.template files not found!")
 	}
 
-	customHandler := handlers.CreateHandler()
+	s := handlers.Server{User: data.NewUserRepo()}
+
+	customHandler := handlers.CreateHandler(&s)
+
 
 	data.Connect()
 	defer data.Close()

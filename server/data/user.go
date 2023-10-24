@@ -8,6 +8,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserRepo struct {
+	CreateUser   func(newUser RegisterBody) error
+	GetUser      func(username string) UserProfile
+	UserExists   func(username string) bool
+	IsValidLogin func(username string, password string) bool
+}
+
+func NewUserRepo() *UserRepo {
+	return &UserRepo{
+		CreateUser:   createUser,
+		GetUser:      getUser,
+		UserExists:   userExists,
+		IsValidLogin: isValidLogin,
+	}
+}
+
 type RegisterBody struct {
 	ProfilePic  string
 	DisplayName string
@@ -40,7 +56,7 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func CreateUser(newUser RegisterBody) error {
+func createUser(newUser RegisterBody) error {
 	passhash, hashError := HashPassword(newUser.Password)
 
 	if hashError != nil {
@@ -78,7 +94,7 @@ func CreateUser(newUser RegisterBody) error {
 	return nil
 }
 
-func GetUser(username string) UserProfile {
+func getUser(username string) UserProfile {
 	rows, _ := db.Query(context.Background(), `
 		SELECT  display_name, 
 				gender, 
@@ -101,7 +117,7 @@ func GetUser(username string) UserProfile {
 	return *userProfile
 }
 
-func UserExists(username string) (bool, error) {
+func userExists(username string) bool {
 	var count int
 	err := db.QueryRow(context.Background(), "SELECT COUNT(*) FROM users WHERE username=$1", username).Scan(&count)
 
@@ -112,7 +128,7 @@ func UserExists(username string) (bool, error) {
 	return count == 1, nil
 }
 
-func IsValidLogin(username string, password string) (bool, error) {
+func isValidLogin(username string, password string) bool {
 	var passhash string
 
 	queryErr := db.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)

@@ -17,7 +17,7 @@ func TestRegister(t *testing.T) {
 
 		mockUserRepo := data.UserRepo{
 			CreateUser: func(newUser data.RegisterBody) error { return nil },
-			UserExists: func(username string) bool { return false },
+			UserExists: func(username string) (bool, error) { return false, nil },
 		}
 
 		r := CreateHandler(&Server{User: &mockUserRepo})
@@ -59,7 +59,7 @@ func TestRegister(t *testing.T) {
 	t.Run("User already exists", func(t *testing.T) {
 		mockUserRepo := data.UserRepo{
 			CreateUser: func(newUser data.RegisterBody) error { return nil },
-			UserExists: func(username string) bool { return true },
+			UserExists: func(username string) (bool, error) { return true, nil },
 		}
 
 		r := CreateHandler(&Server{User: &mockUserRepo})

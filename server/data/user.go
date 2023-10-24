@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -10,9 +9,9 @@ import (
 
 type UserRepo struct {
 	CreateUser   func(newUser RegisterBody) error
-	GetUser      func(username string) UserProfile
-	UserExists   func(username string) bool
-	IsValidLogin func(username string, password string) bool
+	GetUser      func(username string) (*UserProfile, error)
+	UserExists   func(username string) (bool, error)
+	IsValidLogin func(username string, password string) (bool, error)
 }
 
 func NewUserRepo() *UserRepo {
@@ -63,7 +62,7 @@ func createUser(newUser RegisterBody) error {
 		return hashError
 	}
 
-	tag, err := db.Exec(context.Background(),
+	tag, err := pool.Exec(context.Background(),
 		`INSERT INTO users 
         (
             username, 
@@ -94,8 +93,8 @@ func createUser(newUser RegisterBody) error {
 	return nil
 }
 
-func getUser(username string) UserProfile {
-	rows, _ := db.Query(context.Background(), `
+func getUser(username string) (*UserProfile, error) {
+	rows, queryErr := pool.Query(context.Background(), `
 		SELECT  display_name, 
 				gender, 
 				profile_pic,
@@ -106,21 +105,21 @@ func getUser(username string) UserProfile {
 		FROM users
 		WHERE username=$1
 	`, username)
-
-	userProfile, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[UserProfile])
-
-	if err != nil {
-		fmt.Println(username, "not found")
-		return UserProfile{}
+	if queryErr != nil {
+		return &UserProfile{}, queryErr
 	}
 
-	return *userProfile
+	userProfile, collectErr := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[UserProfile])
+	if collectErr != nil {
+		return &UserProfile{}, collectErr
+	}
+
+	return userProfile, nil
 }
 
-func userExists(username string) bool {
+func userExists(username string) (bool, error) {
 	var count int
-	err := db.QueryRow(context.Background(), "SELECT COUNT(*) FROM users WHERE username=$1", username).Scan(&count)
-
+	err := pool.QueryRow(context.Background(), "SELECT COUNT(*) FROM users WHERE username=$1", username).Scan(&count)
 	if err != nil {
 		return false, err
 	}
@@ -128,10 +127,9 @@ func userExists(username string) bool {
 	return count == 1, nil
 }
 
-func isValidLogin(username string, password string) bool {
+func isValidLogin(username string, password string) (bool, error) {
 	var passhash string
-
-	queryErr := db.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
+	queryErr := pool.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 
 	if queryErr != nil {
 		return false, queryErr

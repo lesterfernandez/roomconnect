@@ -14,7 +14,7 @@ import (
 func TestLogin(t *testing.T) {
 	t.Run("Invalid Login: User Exists", func(t *testing.T) {
 		MockUserRepo := data.UserRepo{
-			IsValidLogin: func(username, password string) bool { return false },
+			IsValidLogin: func(username, password string) (bool, error) { return false, nil },
 		}
 
 		r := CreateHandler(&Server{User: &MockUserRepo})
@@ -42,7 +42,7 @@ func TestLogin(t *testing.T) {
 
 	t.Run("Valid Login", func(t *testing.T) {
 		mockRepo := data.UserRepo{
-			IsValidLogin: func(username, password string) bool { return true },
+			IsValidLogin: func(username, password string) (bool, error) { return true, nil },
 		}
 
 		r := CreateHandler(&Server{User: &mockRepo})

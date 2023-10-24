@@ -39,7 +39,7 @@ func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
 	}
 
 	// spread values in order into query function
-	rows, err := db.Query(context.Background(), sqlQuery, queryValues...)
+	rows, err := pool.Query(context.Background(), sqlQuery, queryValues...)
 
 	if err != nil {
 		return nil, err

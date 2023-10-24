@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var db *pgxpool.Pool
+var pool *pgxpool.Pool
 
 func Connect() {
 	name := os.Getenv("POSTGRES_DB")
@@ -20,21 +20,22 @@ func Connect() {
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
 	fmt.Println("Connecting to database URI:", connectionString)
 
-	pool, err := pgxpool.New(context.Background(), connectionString)
+	var poolErr error
+	pool, poolErr = pgxpool.New(context.Background(), connectionString)
 
-	if err != nil {
-		panic("Error while creating pool: " + err.Error())
+	if poolErr != nil {
+		panic("Error while creating pool: " + poolErr.Error())
 	}
 
-	err = pool.Ping(context.Background())
+	pingErr := pool.Ping(context.Background())
 
-	if err != nil {
-		panic("Error while connecting: " + err.Error())
+	if pingErr != nil {
+		panic("Error while connecting: " + pingErr.Error())
 	}
 
 	fmt.Println("Successfully connected to database!")
 }
 
 func Close() {
-	db.Close()
+	pool.Close()
 }

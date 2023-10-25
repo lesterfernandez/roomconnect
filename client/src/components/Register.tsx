@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../types";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleRegister } from "../api";
 
 const Register = () => {
@@ -33,51 +33,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
   const [error, setError] = useState("");
-
-  /* const handleRegister = async () => {
-    const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
-    if (!parsedRegisterBody.success) {
-      setError("Invalid form.");
-      return;
-    }
-
-    if (registerBody.password !== confirmPassword) {
-      setError("The passwords you entered do not match.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(registerBody),
-      });
-
-      if (response.status === 409) {
-        setError("Username conflict.");
-        return;
-      }
-
-      if (!response.ok) {
-        setError("Server Error.");
-        return;
-      }
-
-      const tokenMessage = await response.json();
-      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
-      if (!parsedTokenMessage.success) {
-        setError("Server Error.");
-        return;
-      }
-
-      setToken(parsedTokenMessage.data.token);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
-  }; */
+  const navigate = useNavigate();
 
   return (
     <Box bg="#156087">
@@ -278,7 +234,7 @@ const Register = () => {
             onClick={() => {
               setRegisterLoading(true);
               handleRegister(registerBody, confirmPassword)
-                .then(() => <Navigate to="/" />)
+                .then(() => navigate("/"))
                 .catch(error => {
                   setRegisterLoading(false);
                   setError(error.message);

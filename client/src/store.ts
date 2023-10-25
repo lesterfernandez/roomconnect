@@ -11,4 +11,4 @@ export const useProfileStore = create<UserProfile>(() => ({
   coed: false,
 }));
 
-export const useMessageStore = create<{[name: string]: Message[]}>(() => ({}))
+export const useMessageStore = create<{ [name: string]: Message[] }>(() => ({}));

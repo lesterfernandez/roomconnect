@@ -11,10 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { UserCredentials } from "../types";
-import { userCredentialsSchema, tokenMessageSchema } from "../schemas";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "../token";
+import { handleLogin } from "../api";
 
 const Login = () => {
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({
@@ -24,45 +23,6 @@ const Login = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const handleLogin = async () => {
-    const parsedUserCredentials = userCredentialsSchema.safeParse(userCredentials);
-    if (!parsedUserCredentials.success) {
-      setError("Please enter a username and password.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(parsedUserCredentials.data),
-      });
-
-      if (response.status === 401) {
-        setError("Invalid username or password.");
-      }
-
-      if (!response.ok) {
-        setError("Server Error.");
-        return;
-      }
-
-      const tokenMessage = await response.json();
-      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
-      if (!parsedTokenMessage.success) {
-        setError("Server Error.");
-        return;
-      }
-
-      setToken(parsedTokenMessage.data.token);
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <Box bg="#156087" display="flex" minH="100vh">
@@ -100,7 +60,12 @@ const Login = () => {
             colorScheme="orange"
             onClick={() => {
               setLoginLoading(true);
-              handleLogin().then(() => setLoginLoading(false));
+              handleLogin(userCredentials)
+                .then(() => navigate("/"))
+                .catch(error => {
+                  setLoginLoading(false);
+                  setError(error.message);
+                });
             }}
           >
             Login

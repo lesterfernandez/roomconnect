@@ -1,7 +1,7 @@
 import { userProfileSchema } from "./schemas.ts";
 import { useProfileStore } from "./store.ts";
-import { RegisterBody } from "./types";
-import { registerBodySchema, tokenMessageSchema } from "./schemas.ts";
+import { RegisterBody, UserCredentials } from "./types";
+import { registerBodySchema, tokenMessageSchema, userCredentialsSchema } from "./schemas.ts";
 import { getToken, setToken } from "./token.ts";
 
 export const handleRegister = async (registerBody: RegisterBody, confirmPassword: string) => {
@@ -26,6 +26,30 @@ export const handleRegister = async (registerBody: RegisterBody, confirmPassword
   const tokenMessage = await response.json();
   const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
   if (!parsedTokenMessage.success) throw new Error("Server error");
+
+  setToken(parsedTokenMessage.data.token);
+  return null;
+};
+
+export const handleLogin = async (userCredentials: UserCredentials) => {
+  const parsedUserCredentials = userCredentialsSchema.safeParse(userCredentials);
+  if (!parsedUserCredentials.success) throw new Error("Please enter a username and password.");
+
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(parsedUserCredentials.data),
+  });
+
+  if (response.status === 401) throw new Error("Invalid username or password.");
+
+  if (!response.ok) throw new Error("Server error.");
+
+  const tokenMessage = await response.json();
+  const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
+  if (!parsedTokenMessage.success) throw new Error("Server error.");
 
   setToken(parsedTokenMessage.data.token);
   return null;

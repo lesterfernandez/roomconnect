@@ -18,6 +18,11 @@ export default function Navbar() {
             Profile
           </Text>
         </Link>
+        <Link to="/chat">
+          <Text color={location.pathname == "/chat" ? "#fca95a" : "white"} fontSize="xl">
+            Chat
+          </Text>
+        </Link>
       </Flex>
     </Box>
   );

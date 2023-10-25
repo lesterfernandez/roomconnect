@@ -11,9 +11,10 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { UserCredentials } from "../types";
-import { userCredentialsSchema, tokenMessageSchema } from "../schemas";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { signIn } from "../api";
+import { userCredentialsSchema } from "../schemas";
 import { setToken } from "../token";
 
 const Login = () => {
@@ -25,43 +26,22 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     const parsedUserCredentials = userCredentialsSchema.safeParse(userCredentials);
     if (!parsedUserCredentials.success) {
       setError("Please enter a username and password.");
       return;
     }
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(parsedUserCredentials.data),
+    signIn(userCredentials)
+      .then(res => {
+        setToken(res);
+        navigate("/");
+      })
+      .catch(error => {
+        setLoginLoading(false);
+        setError(error.message);
       });
-
-      if (response.status === 401) {
-        setError("Invalid username or password.");
-      }
-
-      if (!response.ok) {
-        setError("Server Error.");
-        return;
-      }
-
-      const tokenMessage = await response.json();
-      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
-      if (!parsedTokenMessage.success) {
-        setError("Server Error.");
-        return;
-      }
-
-      setToken(parsedTokenMessage.data.token);
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   return (
@@ -100,7 +80,7 @@ const Login = () => {
             colorScheme="orange"
             onClick={() => {
               setLoginLoading(true);
-              handleLogin().then(() => setLoginLoading(false));
+              handleLogin();
             }}
           >
             Login

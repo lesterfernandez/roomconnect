@@ -50,14 +50,17 @@ const Register = () => {
       return;
     }
 
+    setRegisterLoading(true);
     registerUser(registerBody)
       .then(res => {
         setToken(res);
         navigate("/");
       })
       .catch(error => {
-        setRegisterLoading(false);
         setError(error.message);
+      })
+      .finally(() => {
+        setRegisterLoading(false);
       });
   };
 
@@ -254,14 +257,7 @@ const Register = () => {
           </Link>
         </HStack>
         <FormControl display="flex" justifyContent="center">
-          <Button
-            isLoading={registerLoading}
-            colorScheme="orange"
-            onClick={() => {
-              setRegisterLoading(true);
-              handleRegister();
-            }}
-          >
+          <Button isLoading={registerLoading} colorScheme="orange" onClick={handleRegister}>
             Register
           </Button>
         </FormControl>

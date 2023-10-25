@@ -33,15 +33,16 @@ const Login = () => {
       return;
     }
 
+    setLoginLoading(true);
     signIn(userCredentials)
       .then(res => {
         setToken(res);
         navigate("/");
       })
       .catch(error => {
-        setLoginLoading(false);
         setError(error.message);
-      });
+      })
+      .finally(() => setLoginLoading(false));
   };
 
   return (
@@ -75,14 +76,7 @@ const Login = () => {
           </Link>
         </HStack>
         <FormControl display="flex" justifyContent="center">
-          <Button
-            isLoading={loginLoading}
-            colorScheme="orange"
-            onClick={() => {
-              setLoginLoading(true);
-              handleLogin();
-            }}
-          >
+          <Button isLoading={loginLoading} colorScheme="orange" onClick={handleLogin}>
             Login
           </Button>
         </FormControl>

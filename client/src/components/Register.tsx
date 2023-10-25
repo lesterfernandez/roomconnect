@@ -16,10 +16,10 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RegisterBody } from "../types";
-import { registerBodySchema, tokenMessageSchema } from "../schemas";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../api";
+import { registerBodySchema } from "../schemas";
 import { setToken } from "../token";
-import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -37,49 +37,31 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
     const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
+
     if (!parsedRegisterBody.success) {
-      setError("Invalid form.");
+      setError("Invalid form");
       return;
     }
 
     if (registerBody.password !== confirmPassword) {
-      setError("The passwords you entered do not match.");
+      setError("The passwords you entered do not match");
       return;
     }
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(registerBody),
+    setRegisterLoading(true);
+    registerUser(registerBody)
+      .then(res => {
+        setToken(res);
+        navigate("/");
+      })
+      .catch(error => {
+        setError(error.message);
+      })
+      .finally(() => {
+        setRegisterLoading(false);
       });
-
-      if (response.status === 409) {
-        setError("Username conflict.");
-        return;
-      }
-
-      if (!response.ok) {
-        setError("Server Error.");
-        return;
-      }
-
-      const tokenMessage = await response.json();
-      const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
-      if (!parsedTokenMessage.success) {
-        setError("Server Error.");
-        return;
-      }
-
-      setToken(parsedTokenMessage.data.token);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -275,14 +257,7 @@ const Register = () => {
           </Link>
         </HStack>
         <FormControl display="flex" justifyContent="center">
-          <Button
-            isLoading={registerLoading}
-            colorScheme="orange"
-            onClick={() => {
-              setRegisterLoading(true);
-              handleRegister().then(() => setRegisterLoading(false));
-            }}
-          >
+          <Button isLoading={registerLoading} colorScheme="orange" onClick={handleRegister}>
             Register
           </Button>
         </FormControl>

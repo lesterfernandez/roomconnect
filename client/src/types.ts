@@ -31,7 +31,7 @@ export interface SearchBody {
 export type RegisterBody = UserCredentials & UserProfile;
 
 export interface Message {
-  from: string,
-  to: string,
-  content: string
+  from: string;
+  to: string;
+  content: string;
 }

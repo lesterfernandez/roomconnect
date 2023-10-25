@@ -1,23 +1,30 @@
 import { Box, HStack, FormControl, FormLabel, Button, Select } from "@chakra-ui/react";
 import { useState } from "react";
 import UserCard from "./UserCard";
+import { UserProfile } from "../types";
+import { searchResultSchema } from "../schemas";
 
 export default function Search() {
+  const [results, setResults] = useState<UserProfile[]>([]);
   const [budget, setBudget] = useState("");
   const [cleanliness, setCleanliness] = useState("");
   const [loudness, setLoudness] = useState("");
   const [coed, setCoed] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
+
   const handleSearch = async () => {
     const query = `?budget=${budget}&cleanliness=${cleanliness}&loudness=${loudness}&coEd=${coed}`;
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search${query}`);
       const data = await response.json();
+      const dataResults = searchResultSchema.parse(data);
+      setResults(dataResults);
       console.log(data);
     } catch (error) {
       console.error("Error fetching search results:", error);
     }
   };
+
   return (
     <Box bg="#156087" minH="100vh">
       <HStack textColor="white" gap="60px" mx="70px" p="30px" alignItems="flex-end">
@@ -69,7 +76,7 @@ export default function Search() {
             colorScheme="orange"
             width="100%"
             borderRadius="6px"
-            onClick={() => {
+            onClick={async () => {
               setSearchLoading(true);
               handleSearch().then(() => setSearchLoading(false));
             }}
@@ -79,7 +86,7 @@ export default function Search() {
           </Button>
         </FormControl>
       </HStack>
-      <UserCard />
+      {results.map(result => <UserCard profile={result}/>)}
     </Box>
   );
 }

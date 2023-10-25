@@ -1,6 +1,7 @@
 import { Card, Image, Stack, CardBody, Heading, Text, Box, Button } from "@chakra-ui/react";
+import { UserProfile } from "../types";
 
-export default function UserCard() {
+export default function UserCard(props: {profile: UserProfile}) {
   return (
     <Card
       bg="#07354f"
@@ -12,8 +13,8 @@ export default function UserCard() {
     >
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">
         <Image
-          src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-          alt="Caffe Latte"
+          src={props.profile.profilePic}
+          alt="Profile Picture"
           borderRadius="full"
           boxSize="100px"
         />
@@ -22,9 +23,11 @@ export default function UserCard() {
       <Stack>
         <CardBody px="0">
           <Heading size="md">First Name Last Name</Heading>
-          <Text>Gender:</Text>
-          <Text>About:</Text>
-          <Text>Preferences:</Text>
+          <Text>Gender: {props.profile.gender}</Text>
+          <Text>Budget: {props.profile.budget}</Text>
+          <Text>Loudness: {props.profile.loudness}</Text>
+          <Text>Cleanliness: {props.profile.cleanliness}</Text>
+          <Text>Co-Ed: {props.profile.cleanliness}</Text>
         </CardBody>
       </Stack>
 

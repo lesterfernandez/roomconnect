@@ -13,7 +13,9 @@ import { useState } from "react";
 import { UserCredentials } from "../types";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { handleLogin } from "../api";
+import { signIn } from "../api";
+import { userCredentialsSchema } from "../schemas";
+import { setToken } from "../token";
 
 const Login = () => {
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({
@@ -23,6 +25,24 @@ const Login = () => {
   const [loginLoading, setLoginLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleLogin = () => {
+    const parsedUserCredentials = userCredentialsSchema.safeParse(userCredentials);
+    if (!parsedUserCredentials.success) {
+      setError("Please enter a username and password.");
+      return;
+    }
+
+    signIn(userCredentials)
+      .then(res => {
+        setToken(res);
+        navigate("/");
+      })
+      .catch(error => {
+        setLoginLoading(false);
+        setError(error.message);
+      });
+  };
 
   return (
     <Box bg="#156087" display="flex" minH="100vh">
@@ -60,12 +80,7 @@ const Login = () => {
             colorScheme="orange"
             onClick={() => {
               setLoginLoading(true);
-              handleLogin(userCredentials)
-                .then(() => navigate("/"))
-                .catch(error => {
-                  setLoginLoading(false);
-                  setError(error.message);
-                });
+              handleLogin();
             }}
           >
             Login

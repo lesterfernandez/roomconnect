@@ -17,7 +17,9 @@ import {
 import { useState } from "react";
 import { RegisterBody } from "../types";
 import { Link, useNavigate } from "react-router-dom";
-import { handleRegister } from "../api";
+import { registerUser } from "../api";
+import { registerBodySchema } from "../schemas";
+import { setToken } from "../token";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -34,6 +36,30 @@ const Register = () => {
   const [registerLoading, setRegisterLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleRegister = () => {
+    const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
+
+    if (!parsedRegisterBody.success) {
+      setError("Invalid form");
+      return;
+    }
+
+    if (registerBody.password !== confirmPassword) {
+      setError("The passwords you entered do not match");
+      return;
+    }
+
+    registerUser(registerBody)
+      .then(res => {
+        setToken(res);
+        navigate("/");
+      })
+      .catch(error => {
+        setRegisterLoading(false);
+        setError(error.message);
+      });
+  };
 
   return (
     <Box bg="#156087">
@@ -233,12 +259,7 @@ const Register = () => {
             colorScheme="orange"
             onClick={() => {
               setRegisterLoading(true);
-              handleRegister(registerBody, confirmPassword)
-                .then(() => navigate("/"))
-                .catch(error => {
-                  setRegisterLoading(false);
-                  setError(error.message);
-                });
+              handleRegister();
             }}
           >
             Register

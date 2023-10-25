@@ -1,16 +1,10 @@
 import { userProfileSchema } from "./schemas.ts";
 import { useProfileStore } from "./store.ts";
 import { RegisterBody, UserCredentials } from "./types";
-import { registerBodySchema, tokenMessageSchema, userCredentialsSchema } from "./schemas.ts";
-import { getToken, setToken } from "./token.ts";
+import { tokenMessageSchema } from "./schemas.ts";
+import { getToken } from "./token.ts";
 
-export const handleRegister = async (registerBody: RegisterBody, confirmPassword: string) => {
-  const parsedRegisterBody = registerBodySchema.safeParse(registerBody);
-  if (!parsedRegisterBody.success) throw new Error("Invalid form");
-
-  if (registerBody.password !== confirmPassword)
-    throw new Error("The passwords you entered do not match");
-
+export const registerUser = async (registerBody: RegisterBody) => {
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
     method: "POST",
     headers: {
@@ -27,20 +21,16 @@ export const handleRegister = async (registerBody: RegisterBody, confirmPassword
   const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
   if (!parsedTokenMessage.success) throw new Error("Server error");
 
-  setToken(parsedTokenMessage.data.token);
-  return null;
+  return parsedTokenMessage.data.token;
 };
 
-export const handleLogin = async (userCredentials: UserCredentials) => {
-  const parsedUserCredentials = userCredentialsSchema.safeParse(userCredentials);
-  if (!parsedUserCredentials.success) throw new Error("Please enter a username and password.");
-
+export const signIn = async (userCredentials: UserCredentials) => {
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(parsedUserCredentials.data),
+    body: JSON.stringify(userCredentials),
   });
 
   if (response.status === 401) throw new Error("Invalid username or password.");
@@ -51,8 +41,7 @@ export const handleLogin = async (userCredentials: UserCredentials) => {
   const parsedTokenMessage = tokenMessageSchema.safeParse(tokenMessage);
   if (!parsedTokenMessage.success) throw new Error("Server error.");
 
-  setToken(parsedTokenMessage.data.token);
-  return null;
+  return parsedTokenMessage.data.token;
 };
 
 export const handleImplicitLogin = async (): Promise<null> => {

@@ -2,11 +2,26 @@ package data
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type UserRepo struct {
+	CreateUser   func(newUser RegisterBody) error
+	GetUser      func(username string) (*UserProfile, error)
+	UserExists   func(username string) (bool, error)
+	IsValidLogin func(username string, password string) (bool, error)
+}
+
+func NewUserRepo() *UserRepo {
+	return &UserRepo{
+		CreateUser:   createUser,
+		GetUser:      getUser,
+		UserExists:   userExists,
+		IsValidLogin: isValidLogin,
+	}
+}
 
 type RegisterBody struct {
 	ProfilePic  string
@@ -40,14 +55,14 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func CreateUser(newUser RegisterBody) error {
+func createUser(newUser RegisterBody) error {
 	passhash, hashError := HashPassword(newUser.Password)
 
 	if hashError != nil {
-		fmt.Println("Error hashing password for user:", newUser.Username)
+		return hashError
 	}
 
-	tag, err := db.Exec(context.Background(),
+	tag, err := pool.Exec(context.Background(),
 		`INSERT INTO users 
         (
             username, 
@@ -72,17 +87,14 @@ func CreateUser(newUser RegisterBody) error {
 		newUser.ProfilePic)
 
 	if err != nil && !tag.Insert() {
-		fmt.Println("Error while creating user: ", err.Error())
 		return err
 	}
-
-	fmt.Println("Successfully created user:", newUser.Username)
 
 	return nil
 }
 
-func GetUser(username string) UserProfile {
-	rows, _ := db.Query(context.Background(), `
+func getUser(username string) (*UserProfile, error) {
+	rows, queryErr := pool.Query(context.Background(), `
 		SELECT  display_name, 
 				gender, 
 				profile_pic,
@@ -93,44 +105,40 @@ func GetUser(username string) UserProfile {
 		FROM users
 		WHERE username=$1
 	`, username)
-
-	userProfile, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[UserProfile])
-
-	if err != nil {
-		fmt.Println(username, "not found")
-		return UserProfile{}
+	if queryErr != nil {
+		return &UserProfile{}, queryErr
 	}
 
-	return *userProfile
+	userProfile, collectErr := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByName[UserProfile])
+	if collectErr != nil {
+		return &UserProfile{}, collectErr
+	}
+
+	return userProfile, nil
 }
 
-func UserExists(username string) bool {
+func userExists(username string) (bool, error) {
 	var count int
-	err := db.QueryRow(context.Background(), "SELECT COUNT(*) FROM users WHERE username=$1", username).Scan(&count)
-
+	err := pool.QueryRow(context.Background(), "SELECT COUNT(*) FROM users WHERE username=$1", username).Scan(&count)
 	if err != nil {
-		fmt.Println("Error while checking for existing user", err.Error())
-		return false
+		return false, err
 	}
 
-	return count == 1
+	return count == 1, nil
 }
 
-func IsValidLogin(username string, password string) bool {
+func isValidLogin(username string, password string) (bool, error) {
 	var passhash string
-
-	queryErr := db.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
+	queryErr := pool.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 
 	if queryErr != nil {
-		fmt.Println("Error querying for user:", username, ".", queryErr.Error())
-		return false
+		return false, queryErr
 	}
 
 	compareError := bcrypt.CompareHashAndPassword([]byte(passhash), []byte(password))
 	if compareError != nil {
-		fmt.Println("Error: Password is not correct.", compareError.Error())
-		return false
+		return false, compareError
 	}
 
-	return true
+	return true, nil
 }

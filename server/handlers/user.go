@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/lesterfernandez/roommate-finder/server/token"
 )
 
-func registerUser(w http.ResponseWriter, res *http.Request) {
+func (s *Server) registerUser(w http.ResponseWriter, res *http.Request) {
 	newUser := data.RegisterBody{}
 	decodeErr := json.NewDecoder(res.Body).Decode(&newUser)
 
@@ -18,35 +19,48 @@ func registerUser(w http.ResponseWriter, res *http.Request) {
 		return
 	}
 
-	if data.UserExists(newUser.Username) {
+	found, userFoundErr := s.User.UserExists(newUser.Username)
+	if userFoundErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	if found {
 		respondWithError(w, "User already exists", http.StatusConflict)
 		return
 	}
 
-	err := data.CreateUser(newUser)
-	if err != nil {
-		respondWithError(w, "Error creating user", http.StatusInternalServerError)
-		return
-	}
-
-	jwtToken, signingErr := token.CreateJWT(newUser.Username)
-	if signingErr != nil {
+	createUserErr := s.User.CreateUser(newUser)
+	if createUserErr != nil {
+		fmt.Println(createUserErr)
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	token.SendJWT(w, jwtToken)
-}
-
-func loginUser(w http.ResponseWriter, res *http.Request) {
-	returningUser := data.UserCredentials{}
-	err := json.NewDecoder(res.Body).Decode(&returningUser)
-	if err != nil {
-		respondWithError(w, "Error", http.StatusBadRequest)
+	signedToken, signingErr := token.CreateJWT(newUser.Username)
+	if signingErr != nil {
+		fmt.Println(signingErr)
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	if found := data.IsValidLogin(returningUser.Username, returningUser.Password); !found {
+	token.SendJWT(w, signedToken)
+}
+
+func (s *Server) loginUser(w http.ResponseWriter, res *http.Request) {
+	returningUser := data.UserCredentials{}
+
+	decodeErr := json.NewDecoder(res.Body).Decode(&returningUser)
+	if decodeErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	validLogin, validLoginErr := s.User.IsValidLogin(returningUser.Username, returningUser.Password)
+	if validLoginErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	if !validLogin {
 		respondWithError(w, "Incorrect Username or Password", http.StatusUnauthorized)
 		return
 	}
@@ -58,10 +72,9 @@ func loginUser(w http.ResponseWriter, res *http.Request) {
 	}
 
 	token.SendJWT(w, jwtToken)
-
 }
 
-func loginImplicitly(w http.ResponseWriter, res *http.Request) {
+func (s *Server) loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	headers := res.Header
 	authHeader := headers.Get("Authorization")
 
@@ -81,8 +94,12 @@ func loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	}
 
 	subject, _ := token.Claims.GetSubject()
-	foundUser := data.GetUser(subject)
+	user, getUserErr := s.User.GetUser(subject)
+	if getUserErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusUnauthorized)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(foundUser)
+	json.NewEncoder(w).Encode(user)
 }

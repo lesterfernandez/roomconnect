@@ -31,14 +31,14 @@ func (s *Server) registerUser(w http.ResponseWriter, res *http.Request) {
 
 	createUserErr := s.User.CreateUser(newUser)
 	if createUserErr != nil {
-		fmt.Println(createUserErr)
+		fmt.Println("createUserErr", createUserErr)
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	signedToken, signingErr := token.CreateJWT(newUser.Username)
 	if signingErr != nil {
-		fmt.Println(signingErr)
+		fmt.Println("signingErr", signingErr)
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -86,7 +86,7 @@ func (s *Server) loginImplicitly(w http.ResponseWriter, res *http.Request) {
 
 	splitAuthHeader := strings.Split(authHeader, " ")
 	JWT := splitAuthHeader[1]
-	token, err := token.VerifyJWT(JWT, token.JWTKey)
+	token, err := token.VerifyJWT(JWT)
 
 	if err != nil {
 		respondWithError(w, "Invalid token", http.StatusUnauthorized)

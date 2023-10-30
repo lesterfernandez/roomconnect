@@ -12,7 +12,7 @@ var searchFields = map[string]string{
 	"cleanliness": "clean_tier",
 	"gender":      "gender",
 	"coed":        "coed",
-	"loudness":    "loudness",
+	"loudness":    "loud_tier",
 }
 
 func searchUsers(w http.ResponseWriter, res *http.Request) {

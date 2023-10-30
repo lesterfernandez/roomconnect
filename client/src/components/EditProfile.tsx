@@ -14,7 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { UserProfile } from "../types";
+import type { UserProfile } from "../types";
 import { userProfileSchema } from "../schemas";
 import { useProfileStore } from "../store";
 

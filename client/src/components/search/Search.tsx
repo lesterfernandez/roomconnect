@@ -1,8 +1,8 @@
 import { Box, HStack, FormControl, FormLabel, Button, Select } from "@chakra-ui/react";
 import { useState } from "react";
 import UserCard from "./UserCard";
-import { UserProfile } from "../types";
-import { searchResultSchema } from "../schemas";
+import type { UserProfile } from "../../types";
+import { searchResultSchema } from "../../schemas";
 
 export default function Search() {
   const [results, setResults] = useState<UserProfile[]>([]);
@@ -86,7 +86,9 @@ export default function Search() {
           </Button>
         </FormControl>
       </HStack>
-      {results.map(result => <UserCard profile={result}/>)}
+      {results.map(result => (
+        <UserCard profile={result} />
+      ))}
     </Box>
   );
 }

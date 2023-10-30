@@ -1,7 +1,7 @@
 import { Card, Image, Stack, CardBody, Heading, Text, Box, Button } from "@chakra-ui/react";
-import { UserProfile } from "../types";
+import type { UserProfile } from "../../types";
 
-export default function UserCard(props: {profile: UserProfile}) {
+export default function UserCard(props: { profile: UserProfile }) {
   return (
     <Card
       bg="#07354f"

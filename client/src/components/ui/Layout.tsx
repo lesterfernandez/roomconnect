@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Navbar from "./Navbar";
 import { Box } from "@chakra-ui/react";
 
@@ -8,7 +8,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <Box minH="100vh">
+    <Box>
       <Navbar />
       {children}
     </Box>

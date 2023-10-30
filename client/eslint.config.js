@@ -27,11 +27,11 @@ export default [
       },
     },
     plugins: {
-      ts,
+      "@typescript-eslint": ts,
       hooks,
     },
     rules: {
-      ...ts.rules.recommended,
+      ...ts.configs.recommended.rules,
       "hooks/rules-of-hooks": "error",
       "hooks/exhaustive-deps": "warn",
     },

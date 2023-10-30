@@ -1,4 +1,4 @@
-import { Box, HStack, FormControl, FormLabel, Button, Select } from "@chakra-ui/react";
+import { HStack, FormControl, FormLabel, Button, Select, Container, Stack } from "@chakra-ui/react";
 import { useState } from "react";
 import UserCard from "./UserCard";
 import type { UserProfile } from "../../types";
@@ -26,8 +26,8 @@ export default function Search() {
   };
 
   return (
-    <Box bg="#156087" minH="100vh">
-      <HStack textColor="white" gap="60px" mx="70px" p="30px" alignItems="flex-end">
+    <Container maxW="container.xl" px="4">
+      <HStack gap="60px" py="16" alignItems="flex-end">
         <FormControl>
           <FormLabel>Budget</FormLabel>
           <Select
@@ -40,6 +40,7 @@ export default function Search() {
             <option label="2000+" value="3" style={{ color: "black" }}></option>
           </Select>
         </FormControl>
+
         <FormControl>
           <FormLabel>Cleanliness</FormLabel>
           <Select
@@ -52,6 +53,7 @@ export default function Search() {
             <option label="Clean Freak" value="3" style={{ color: "black" }}></option>
           </Select>
         </FormControl>
+
         <FormControl>
           <FormLabel>Loudness</FormLabel>
           <Select
@@ -64,6 +66,7 @@ export default function Search() {
             <option label="Party Animal" value="3" style={{ color: "black" }}></option>
           </Select>
         </FormControl>
+
         <FormControl>
           <FormLabel>Co-Ed</FormLabel>
           <Select placeholder="Select" value={coed} onChange={event => setCoed(event.target.value)}>
@@ -71,6 +74,7 @@ export default function Search() {
             <option label="No" value="false" style={{ color: "black" }}></option>
           </Select>
         </FormControl>
+
         <FormControl>
           <Button
             colorScheme="orange"
@@ -86,9 +90,11 @@ export default function Search() {
           </Button>
         </FormControl>
       </HStack>
-      {results.map(result => (
-        <UserCard profile={result} />
-      ))}
-    </Box>
+      <Stack gap="6" pb="6">
+        {results.map((result, i) => (
+          <UserCard profile={result} key={`card-${i}`} />
+        ))}
+      </Stack>
+    </Container>
   );
 }

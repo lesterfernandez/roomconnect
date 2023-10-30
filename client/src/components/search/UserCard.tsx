@@ -1,16 +1,9 @@
 import { Card, Image, Stack, CardBody, Heading, Text, Box, Button } from "@chakra-ui/react";
-import { UserProfile } from "../types";
+import type { UserProfile } from "../../types";
 
-export default function UserCard(props: {profile: UserProfile}) {
+export default function UserCard(props: { profile: UserProfile }) {
   return (
-    <Card
-      bg="#07354f"
-      direction={{ base: "column", sm: "row" }}
-      overflow="hidden"
-      variant="outline"
-      textColor="white"
-      mx="300px"
-    >
+    <Card direction={{ base: "column", sm: "row" }} variant="outline">
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">
         <Image
           src={props.profile.profilePic}

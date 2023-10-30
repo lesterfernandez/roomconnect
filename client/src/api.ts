@@ -1,6 +1,6 @@
+import type { RegisterBody, UserCredentials } from "./types";
 import { userProfileSchema } from "./schemas.ts";
 import { useProfileStore } from "./store.ts";
-import { RegisterBody, UserCredentials } from "./types";
 import { tokenMessageSchema } from "./schemas.ts";
 import { getToken } from "./token.ts";
 

@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/lesterfernandez/roommate-finder/server/data"
 )
 
-var JWTKey = []byte("secret")
+const environmentKey string = "JWT_SECRET"
 
 func SendJWT(w http.ResponseWriter, jwt string) {
 	w.Header().Set("Application-Type", "application/json")
@@ -19,6 +20,7 @@ func SendJWT(w http.ResponseWriter, jwt string) {
 
 func CreateJWT(username string) (string, error) {
 	expirationTime := time.Now().Add(time.Hour * 48)
+	jwtSecret := []byte(os.Getenv(environmentKey))
 
 	claims := &jwt.RegisteredClaims{
 		Subject:   username,
@@ -26,15 +28,17 @@ func CreateJWT(username string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(JWTKey)
+	tokenString, err := token.SignedString(jwtSecret)
 
 	return tokenString, err
 }
 
-func VerifyJWT(tokenString string, secretKey []byte) (*jwt.Token, error) {
+func VerifyJWT(tokenString string) (*jwt.Token, error) {
+	jwtSecret := []byte(os.Getenv(environmentKey))
+
 	//Verify the correct signing method is used (HS256)
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+		return jwtSecret, nil
 	}, jwt.WithValidMethods([]string{"HS256"}))
 
 	if err != nil {

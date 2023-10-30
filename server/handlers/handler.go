@@ -14,7 +14,6 @@ type Server struct {
 }
 
 func CreateHandler(s *Server) http.Handler {
-
 	r := chi.NewRouter()
 
 	c := cors.New(cors.Options{
@@ -29,6 +28,7 @@ func CreateHandler(s *Server) http.Handler {
 	r.Post("/login", s.loginUser)
 	r.Get("/implicit_login", s.loginImplicitly)
 	r.Get("/search", searchUsers)
+	r.Get("/chat", s.handleChat)
 
 	return r
 }

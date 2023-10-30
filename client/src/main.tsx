@@ -1,14 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-// Import pages
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
 import EditProfile from "./components/EditProfile";
-import Search from "./components/Search";
+import Search from "./components/search/Search";
 import NotFound from "./components/NotFound";
-import ChatList from "./components/ChatList";
-import Chat from "./components/Chat";
+import ChatList from "./components/chat/ChatList";
+import Chat from "./components/chat/Chat";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Root, loader as rootLoader } from "./components/Root";

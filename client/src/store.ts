@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Message, UserProfile } from "./types";
+import type { Message, UserProfile } from "./types";
 
 export const useProfileStore = create<UserProfile>(() => ({
   profilePic: "",

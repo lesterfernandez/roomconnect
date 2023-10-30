@@ -4,8 +4,7 @@ export const apiErrorSchema = z.object({
   errorMessage: z.string(),
 });
 
-const userProfileBodySchema = z
-.object({
+const userProfileBodySchema = z.object({
   profilePic: z.string().optional(),
   budget: z.literal(1).or(z.literal(2)).or(z.literal(3)).or(z.literal(4)),
   cleanliness: z.literal(1).or(z.literal(2)).or(z.literal(3)),
@@ -15,8 +14,7 @@ const userProfileBodySchema = z
   loudness: z.literal(1).or(z.literal(2)).or(z.literal(3)),
 });
 
-export const userProfileSchema = userProfileBodySchema
-  .or(apiErrorSchema);
+export const userProfileSchema = userProfileBodySchema.or(apiErrorSchema);
 
 export const searchResultSchema = z.array(userProfileBodySchema);
 

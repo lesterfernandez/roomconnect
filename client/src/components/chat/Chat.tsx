@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useMessageStore } from "../store";
+import { useMessageStore } from "../../store";
 import { VStack, Tag, Text } from "@chakra-ui/react";
 
 export default function Chat() {

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { HStack, VStack } from "@chakra-ui/react";
-import { useMessageStore } from "../store";
+import { useMessageStore } from "../../store";
 
 export default function ChatList() {
   function seedUsernames() {

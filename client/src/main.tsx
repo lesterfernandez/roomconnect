@@ -12,6 +12,7 @@ import Chat from "./components/chat/Chat";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Root, loader as rootLoader } from "./components/Root";
 import { ChakraProvider } from "@chakra-ui/react";
+import LandingPage from "./components/ui/LandingPage";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/landing",
+    element: <LandingPage />,
   },
 ]);
 

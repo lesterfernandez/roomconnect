@@ -15,7 +15,7 @@ export default function UserCard(props: { profile: UserProfile }) {
 
       <Stack>
         <CardBody px="0">
-          <Heading size="md">First Name Last Name</Heading>
+          <Heading size="md">{props.profile.displayName}</Heading>
           <Text>Gender: {props.profile.gender}</Text>
           <Text>Budget: {props.profile.budget}</Text>
           <Text>Loudness: {props.profile.loudness}</Text>

@@ -20,6 +20,12 @@ func AuthenticateRoute(handler http.Handler) http.Handler {
 
 		// Validate token
 		splitAuthHeader := strings.Split(authHeader, " ")
+
+		if len(splitAuthHeader) != 2 {
+			respondWithError(w, "Invalid token format", http.StatusBadRequest)
+			return
+		}
+
 		JWT := splitAuthHeader[1]
 		_, err := token.VerifyJWT(JWT)
 

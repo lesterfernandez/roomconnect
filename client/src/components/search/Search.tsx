@@ -27,7 +27,7 @@ export default function Search() {
 
   return (
     <Container maxW="container.xl" px="4">
-      <HStack gap="60px" py="16" alignItems="flex-end">
+      <HStack gap="20" py="16" alignItems="flex-end">
         <FormControl>
           <FormLabel>Budget</FormLabel>
           <Select

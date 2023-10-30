@@ -68,7 +68,7 @@ const Register = () => {
     setRegisterBody({ ...registerBody, [e.target.name]: e.target.value });
 
   return (
-    <Container minH="100vh" maxW="container.lg" centerContent justifyContent="center">
+    <Container minH="100vh" maxW="container.lg">
       <Stack
         px={{ base: "4", md: "24" }}
         py={{ base: "4", md: "16" }}

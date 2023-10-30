@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Message, UserProfile } from "./types";
+import { type Message, type UserProfile, type SearchStore } from "./types";
 
 export const useProfileStore = create<UserProfile>(() => ({
   profilePic: "",
@@ -12,3 +12,13 @@ export const useProfileStore = create<UserProfile>(() => ({
 }));
 
 export const useMessageStore = create<{ [name: string]: Message[] }>(() => ({}));
+
+export const useSearchStore = create<SearchStore>(() => ({
+  settings: {
+    budget: "",
+    cleanliness: "",
+    loudness: "",
+    coed: "",
+  },
+  results: []
+}))

@@ -27,8 +27,14 @@ func CreateHandler(s *Server) http.Handler {
 	r.Post("/register", s.registerUser)
 	r.Post("/login", s.loginUser)
 	r.Get("/implicit_login", s.loginImplicitly)
-	r.Get("/search", searchUsers)
-	r.Get("/chat", s.handleChat)
+
+	r.Group(func(r chi.Router) {
+		r.Use(AuthenticateRoute)
+
+		// Authenticated routes
+		r.Get("/search", searchUsers)
+		r.Get("/chat", s.handleChat)
+	})
 
 	return r
 }

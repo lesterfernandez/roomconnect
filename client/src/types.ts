@@ -35,3 +35,15 @@ export interface Message {
   to: string;
   content: string;
 }
+
+export interface SearchFilter {
+  budget: string;
+  cleanliness: string;
+  loudness: string;
+  coed: string;
+}
+
+export interface SearchStore {
+  settings: SearchFilter;
+  results: UserProfile[];
+}

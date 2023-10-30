@@ -1,6 +1,7 @@
 package token
 
 import (
+	"os"
 	"testing"
 )
 
@@ -17,10 +18,10 @@ func TestCreateJWT(t *testing.T) {
 func TestVerifyJWT(t *testing.T) {
 	username := "Gustavo"
 	tokenString, _ := CreateJWT(username)
-	token, err := VerifyJWT(tokenString, JWTKey)
+	token, err := VerifyJWT(tokenString)
 
 	if err != nil {
-		t.Errorf("VerifyJWT(%s, %s) returned err: %s", username, string(JWTKey), err)
+		t.Errorf("VerifyJWT(%s, %s) returned err: %s", username, os.Getenv("JWT_SECRET"), err)
 	}
 
 	subject, _ := token.Claims.GetSubject()

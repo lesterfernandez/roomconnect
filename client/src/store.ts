@@ -20,5 +20,5 @@ export const useSearchStore = create<SearchStore>(() => ({
     loudness: "",
     coed: "",
   },
-  results: []
-}))
+  results: [],
+}));

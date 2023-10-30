@@ -12,7 +12,7 @@ import { type default as React, useState } from "react";
 import type { UserCredentials } from "../../types";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { signIn } from "../../api";
+import { signIn } from "../../api/auth";
 import { userCredentialsSchema } from "../../schemas";
 import { setToken } from "../../token";
 

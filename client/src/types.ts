@@ -1,12 +1,19 @@
-export interface UserProfile {
+export type UserProfile = {
   profilePic?: string;
   displayName: string;
-  budget: 0 | 1 | 2 | 3 | 4;
   gender: string;
+  budget: 0 | 1 | 2 | 3 | 4;
   cleanliness: 0 | 1 | 2 | 3;
   loudness: 0 | 1 | 2 | 3;
   coed: boolean;
-}
+};
+
+export type UserCredentials = {
+  username: string;
+  password: string;
+};
+
+export type RegisterBody = UserCredentials & UserProfile;
 
 export type ApiError = {
   errorMessage: string;
@@ -16,34 +23,20 @@ export type TokenMessage = {
   token: string;
 };
 
-export interface UserCredentials {
-  username: string;
-  password: string;
-}
-
-export interface SearchBody {
-  budget: number;
-  cleanliness: string;
-  loudness: string;
-  coed: string;
-}
-
-export type RegisterBody = UserCredentials & UserProfile;
-
-export interface Message {
-  from: string;
-  to: string;
-  content: string;
-}
-
-export interface SearchFilter {
+export type SearchBody = {
   budget: string;
   cleanliness: string;
   loudness: string;
   coed: string;
-}
+};
 
 export interface SearchStore {
-  settings: SearchFilter;
+  settings: SearchBody;
   results: UserProfile[];
 }
+
+export type Message = {
+  from: string;
+  to: string;
+  content: string;
+};

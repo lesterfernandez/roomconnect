@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <Box bg="#01293f">
+    <Box bg="#01293f" pos="relative">
       <Flex p="5" gap="40px" m="0px 40px">
         <NavLink to="/">
           {({ isActive }) => (

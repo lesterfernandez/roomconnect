@@ -8,7 +8,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <Box minH="100vh">
+    <Box h="100vh" display="flex" flexDirection="column">
       <Navbar />
       {children}
     </Box>

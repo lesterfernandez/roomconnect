@@ -1,16 +1,11 @@
-import { Card, Image, Stack, CardBody, Heading, Text, Box, Button } from "@chakra-ui/react";
+import { Card, Stack, CardBody, Heading, Text, Box, Button, Avatar } from "@chakra-ui/react";
 import type { UserProfile } from "../../types";
 
 export default function UserCard(props: { profile: UserProfile }) {
   return (
     <Card direction={{ base: "column", sm: "row" }} variant="outline">
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">
-        <Image
-          src={props.profile.profilePic}
-          alt="Profile Picture"
-          borderRadius="full"
-          boxSize="100px"
-        />
+        <Avatar mx="auto" size="xl" src={props.profile.profilePic} />
       </Box>
 
       <Stack>

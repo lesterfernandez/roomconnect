@@ -29,7 +29,12 @@ export default function Search() {
 
   return (
     <Container maxW="container.lg" px="4">
-      <Flex gap="6" py="16" alignItems="flex-end">
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        gap="6"
+        py={{ base: "4", md: "16" }}
+        alignItems="flex-end"
+      >
         <FormControl>
           <FormLabel>Budget</FormLabel>
           <Select

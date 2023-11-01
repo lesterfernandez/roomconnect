@@ -12,6 +12,7 @@ type UserRepo struct {
 	GetUser      func(username string) (*UserProfile, error)
 	UserExists   func(username string) (bool, error)
 	IsValidLogin func(username string, password string) (bool, error)
+	EditUser     func(user *UserProfile, username string) (*UserProfile, error)
 }
 
 func NewUserRepo() *UserRepo {
@@ -20,6 +21,7 @@ func NewUserRepo() *UserRepo {
 		GetUser:      getUser,
 		UserExists:   userExists,
 		IsValidLogin: isValidLogin,
+		EditUser:     editUser,
 	}
 }
 
@@ -140,4 +142,22 @@ func isValidLogin(username string, password string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func editUser(user *UserProfile, username string) (*UserProfile, error) {
+	updateQuery := `UPDATE users SET profile_pic = $1, display_name = $2, budget_tier = $3, gender = $4,
+	clean_tier = $5, loud_tier = $6, coed = $7
+	WHERE username = $8`
+
+	queryValues := []any{user.ProfilePic, user.DisplayName, user.Budget, user.Gender, user.Cleanliness, user.Loudness, user.Coed, username}
+	tag, err := pool.Exec(context.Background(), updateQuery, queryValues...)
+	if err != nil || !tag.Update() {
+		return &UserProfile{}, err
+	}
+
+	updatedUser, err := getUser(username)
+	if err != nil {
+		return &UserProfile{}, err
+	}
+	return updatedUser, nil
 }

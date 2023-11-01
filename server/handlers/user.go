@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"strings"
 
@@ -31,7 +32,6 @@ func (s *Server) registerUser(w http.ResponseWriter, res *http.Request) {
 
 	createUserErr := s.User.CreateUser(newUser)
 	if createUserErr != nil {
-		fmt.Println("createUserErr", createUserErr)
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -99,4 +99,35 @@ func (s *Server) loginImplicitly(w http.ResponseWriter, res *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
+}
+
+func (s *Server) editProfile(w http.ResponseWriter, req *http.Request) {
+
+	verifiedToken := req.Context().Value(ContextKey).(*jwt.Token)
+
+	subject, tokenErr := verifiedToken.Claims.GetSubject()
+	if tokenErr != nil {
+		//not sure what error msg is best here
+		respondWithError(w, "Invalid Token", http.StatusBadRequest)
+		return
+	}
+
+	user := data.UserProfile{}
+	decodeErr := json.NewDecoder(req.Body).Decode(&user)
+	if decodeErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	updatedUser, updateErr := s.User.EditUser(&user, subject)
+	if updateErr != nil {
+		respondWithError(w, "Internal Server Error: Bad DB Query", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	encodeErr := json.NewEncoder(w).Encode(updatedUser)
+	if encodeErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
 }

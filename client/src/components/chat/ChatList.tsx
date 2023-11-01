@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
-import { HStack, VStack } from "@chakra-ui/react";
+import { Stack, HStack, VStack, StackDivider, Text, Box } from "@chakra-ui/react";
 import { useMessageStore } from "../../store";
 
 export default function ChatList() {
@@ -30,12 +30,39 @@ export default function ChatList() {
   }, []);
 
   return (
-    <HStack minH="100%">
-      <VStack flexBasis="30%">
-        {Object.keys(messages).map(username => (
-          <Link to={`/chat/${username}`}>{username}</Link>
-        ))}
-      </VStack>
+    <HStack pos="relative" h="full">
+      <Stack px="2" py="2" borderWidth="thin" borderColor="gray.200" shadow="md" w="18rem" h="100%">
+        <VStack
+          mt={2}
+          divider={<StackDivider borderColor="gray.200" />}
+          w="100%"
+          h="100%"
+          spacing={1}
+          align="stretch"
+        >
+          {Object.keys(messages).map(username => (
+            <Link to={`/chat/${username}`}>
+              <Box
+                w="100%"
+                h="45px"
+                px="2"
+                py="1"
+                rounded={3}
+                cursor="pointer"
+                _hover={{
+                  background: "gray.100",
+                  transitionDuration: "0.2s",
+                  transitionTimingFunction: "ease-in-out",
+                }}
+              >
+                <Text fontSize="sm" as="b">
+                  {username}
+                </Text>
+              </Box>
+            </Link>
+          ))}
+        </VStack>
+      </Stack>
       <Outlet />
     </HStack>
   );

@@ -6,8 +6,8 @@ import Register from "./components/auth/Register";
 import EditProfile from "./components/EditProfile";
 import Search from "./components/search/Search";
 import NotFound from "./components/NotFound";
-import ChatList from "./components/chat/ChatList";
 import Chat from "./components/chat/Chat";
+import Conversations from "./components/chat/Conversations";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Root, loader as rootLoader } from "./components/Root";
@@ -31,11 +31,11 @@ const router = createBrowserRouter([
       },
       {
         path: "chat",
-        element: <ChatList />,
+        element: <Chat />,
         children: [
           {
             path: ":username",
-            element: <Chat />,
+            element: <Conversations />,
           },
         ],
       },

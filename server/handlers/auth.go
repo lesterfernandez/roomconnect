@@ -1,11 +1,16 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
 	"github.com/lesterfernandez/roommate-finder/server/token"
 )
+
+type ctxKey string
+
+var ContextKey ctxKey
 
 func AuthenticateRoute(handler http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -27,14 +32,18 @@ func AuthenticateRoute(handler http.Handler) http.Handler {
 		}
 
 		JWT := splitAuthHeader[1]
-		_, err := token.VerifyJWT(JWT)
+		token, err := token.VerifyJWT(JWT)
 
 		if err != nil {
 			respondWithError(w, "Error validating token", http.StatusUnauthorized)
 			return
 		}
 
-		handler.ServeHTTP(w, r)
+		ContextKey = ctxKey("token")
+		ctx := context.WithValue(context.Background(), ContextKey, token)
+		reqWithContext := r.WithContext(ctx)
+
+		handler.ServeHTTP(w, reqWithContext)
 	}
 	return http.HandlerFunc(fn)
 }

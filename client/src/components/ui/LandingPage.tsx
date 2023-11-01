@@ -1,12 +1,13 @@
-import Navbar from "./Navbar";
-import { Container } from "@chakra-ui/react";
+import "./css/LandingPage.css";
 
-const LandingPage = () => {
+export default function LandingPage() {
   return (
-    <Container minH="100vh" style={{ backgroundColor: "blue" }}>
-      <Navbar />
-    </Container>
+    <main>
+      <h1 className="greeting">
+        Find your <br />
+        <span>roommates in</span> <br />
+        Miami
+      </h1>
+    </main>
   );
-};
-
-export default LandingPage;
+}

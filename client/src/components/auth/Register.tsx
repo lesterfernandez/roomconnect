@@ -16,7 +16,7 @@ import {
 import { type default as React, useState } from "react";
 import type { RegisterBody } from "../../types";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../../api";
+import { registerUser } from "../../api/auth";
 import { registerBodySchema } from "../../schemas";
 import { setToken } from "../../token";
 import SegmentedControl from "../ui/SegmentedControl";

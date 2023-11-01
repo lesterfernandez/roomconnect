@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Await, useLoaderData, Outlet, Navigate, defer } from "react-router-dom";
 import { Box, CircularProgress } from "@chakra-ui/react";
-import { handleImplicitLogin } from "../api";
+import { handleImplicitLogin } from "../api/auth.ts";
 import Layout from "./ui/Layout.tsx";
 
 export const loader = () => defer({ response: handleImplicitLogin() });

@@ -1,8 +1,8 @@
-import type { RegisterBody, UserCredentials } from "./types";
-import { userProfileSchema } from "./schemas.ts";
-import { useProfileStore } from "./store.ts";
-import { tokenMessageSchema } from "./schemas.ts";
-import { getToken } from "./token.ts";
+import type { RegisterBody, UserCredentials } from "../types.ts";
+import { userProfileSchema } from "../schemas.ts";
+import { useProfileStore } from "../store.ts";
+import { tokenMessageSchema } from "../schemas.ts";
+import { getToken } from "../token.ts";
 
 export const registerUser = async (registerBody: RegisterBody) => {
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {

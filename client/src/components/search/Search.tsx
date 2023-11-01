@@ -1,43 +1,45 @@
-import { HStack, FormControl, FormLabel, Button, Select, Container, Stack } from "@chakra-ui/react";
-import { useState } from "react";
+import { FormControl, FormLabel, Button, Select, Container, Stack, Flex } from "@chakra-ui/react";
+import React, { useState } from "react";
 import UserCard from "./UserCard";
-import { searchResultSchema } from "../../schemas";
 import { useSearchStore } from "../../store";
+import { searchUsers } from "../../api/search";
+import type { SearchBody } from "../../types";
 
 export default function Search() {
-  const searchStore = useSearchStore();
+  const { settings, results } = useSearchStore();
   const [searchLoading, setSearchLoading] = useState(false);
 
   const handleSearch = async () => {
-    const query = `?budget=${searchStore.settings.budget}&cleanliness=${searchStore.settings.cleanliness}&loudness=${searchStore.settings.loudness}&coEd=${searchStore.settings.coed}`;
+    setSearchLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/search${query}`);
-      const data = await response.json();
-      const dataResults = searchResultSchema.parse(data);
-      console.log("results", dataResults);
-      useSearchStore.setState(prev => ({ ...prev, results: dataResults }));
+      const results = await searchUsers(settings);
+      useSearchStore.setState({ results });
     } catch (error) {
       console.error("Error fetching search results:", error);
+    } finally {
+      setSearchLoading(false);
     }
   };
 
+  const handleChange = (name: keyof SearchBody) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+    useSearchStore.setState({
+      settings: { [name]: e.target.value },
+    });
+  };
+
   return (
-    <Container maxW="container.xl" px="4">
-      <HStack gap="20" py="16" alignItems="flex-end">
+    <Container maxW="container.lg" px="4">
+      <Flex gap="6" py="16" alignItems="flex-end">
         <FormControl>
           <FormLabel>Budget</FormLabel>
           <Select
             placeholder="Select budget"
-            value={searchStore.settings.budget}
-            onChange={event =>
-              useSearchStore.setState({
-                settings: { ...searchStore.settings, budget: event.target.value },
-              })
-            }
+            value={settings.budget}
+            onChange={handleChange("budget")}
           >
-            <option label="1000" value="1" style={{ color: "black" }}></option>
-            <option label="1000-2000" value="2" style={{ color: "black" }}></option>
-            <option label="2000+" value="3" style={{ color: "black" }}></option>
+            <option label="1000" value="1"></option>
+            <option label="1000-2000" value="2"></option>
+            <option label="2000+" value="3"></option>
           </Select>
         </FormControl>
 
@@ -45,16 +47,12 @@ export default function Search() {
           <FormLabel>Cleanliness</FormLabel>
           <Select
             placeholder="Select cleanliness"
-            value={searchStore.settings.cleanliness}
-            onChange={event =>
-              useSearchStore.setState({
-                settings: { ...searchStore.settings, cleanliness: event.target.value },
-              })
-            }
+            value={settings.cleanliness}
+            onChange={handleChange("cleanliness")}
           >
-            <option label="Messy" value="1" style={{ color: "black" }}></option>
-            <option label="Average" value="2" style={{ color: "black" }}></option>
-            <option label="Clean Freak" value="3" style={{ color: "black" }}></option>
+            <option label="Messy" value="1"></option>
+            <option label="Average" value="2"></option>
+            <option label="Clean Freak" value="3"></option>
           </Select>
         </FormControl>
 
@@ -62,32 +60,20 @@ export default function Search() {
           <FormLabel>Loudness</FormLabel>
           <Select
             placeholder="Select loudness"
-            value={searchStore.settings.loudness}
-            onChange={event =>
-              useSearchStore.setState({
-                settings: { ...searchStore.settings, loudness: event.target.value },
-              })
-            }
+            value={settings.loudness}
+            onChange={handleChange("loudness")}
           >
-            <option label="Quiet" value="1" style={{ color: "black" }}></option>
-            <option label="Average" value="2" style={{ color: "black" }}></option>
-            <option label="Party Animal" value="3" style={{ color: "black" }}></option>
+            <option label="Quiet" value="1" />
+            <option label="Average" value="2" />
+            <option label="Party Animal" value="3" />
           </Select>
         </FormControl>
 
         <FormControl>
           <FormLabel>Co-Ed</FormLabel>
-          <Select
-            placeholder="Select"
-            value={searchStore.settings.coed}
-            onChange={event =>
-              useSearchStore.setState({
-                settings: { ...searchStore.settings, coed: event.target.value },
-              })
-            }
-          >
-            <option label="Yes" value="true" style={{ color: "black" }}></option>
-            <option label="No" value="false" style={{ color: "black" }}></option>
+          <Select placeholder="Select" value={settings.coed} onChange={handleChange("coed")}>
+            <option label="Yes" value="true" />
+            <option label="No" value="false" />
           </Select>
         </FormControl>
 
@@ -96,18 +82,15 @@ export default function Search() {
             colorScheme="orange"
             width="100%"
             borderRadius="6px"
-            onClick={async () => {
-              setSearchLoading(true);
-              handleSearch().then(() => setSearchLoading(false));
-            }}
+            onClick={handleSearch}
             isLoading={searchLoading}
           >
             Search
           </Button>
         </FormControl>
-      </HStack>
+      </Flex>
       <Stack gap="6" pb="6">
-        {searchStore.results.map((result, i) => (
+        {results.map((result, i) => (
           <UserCard profile={result} key={`card-${i}`} />
         ))}
       </Stack>

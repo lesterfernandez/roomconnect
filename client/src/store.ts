@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { type Message, type SearchBody, type UserAttributes, type UserProfile } from "./types";
+import type { Message, SearchBody, UserAttributes, UserProfile } from "./types";
 
 export const useProfileStore = create<UserProfile>(() => ({
   username: "",

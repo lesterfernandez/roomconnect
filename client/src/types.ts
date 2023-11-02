@@ -1,11 +1,15 @@
-export type UserProfile = {
-  profilePic?: string;
+export type UserAttributes = {
   displayName: string;
+  profilePic?: string;
   gender: string;
   budget: 0 | 1 | 2 | 3 | 4;
   cleanliness: 0 | 1 | 2 | 3;
   loudness: 0 | 1 | 2 | 3;
   coed: boolean;
+};
+
+export type UserProfile = UserAttributes & {
+  username: string;
 };
 
 export type UserCredentials = {
@@ -29,11 +33,6 @@ export type SearchBody = {
   loudness: string;
   coed: string;
 };
-
-export interface SearchStore {
-  settings: SearchBody;
-  results: UserProfile[];
-}
 
 export type Message = {
   from: string;

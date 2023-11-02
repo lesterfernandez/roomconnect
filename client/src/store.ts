@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { type Message, type SearchBody, type UserProfile } from "./types";
+import { type Message, type SearchBody, type UserAttributes, type UserProfile } from "./types";
 
 export const useProfileStore = create<UserProfile>(() => ({
+  username: "",
   profilePic: "",
   displayName: "",
   gender: "",
@@ -11,11 +12,15 @@ export const useProfileStore = create<UserProfile>(() => ({
   coed: false,
 }));
 
-export const useMessageStore = create<{ [name: string]: Message[] }>(() => ({}));
+type MessageStore = {
+  [name: string]: Message[] | undefined;
+};
+
+export const useMessageStore = create<MessageStore>(() => ({}));
 
 type SearchStore = {
   settings: Partial<SearchBody>;
-  results: UserProfile[];
+  results: UserAttributes[];
 };
 
 export const useSearchStore = create<SearchStore>(() => ({

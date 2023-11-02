@@ -56,12 +56,8 @@ func (s *Server) loginUser(w http.ResponseWriter, res *http.Request) {
 	}
 
 	validLogin, validLoginErr := s.User.IsValidLogin(returningUser.Username, returningUser.Password)
-	if validLoginErr != nil {
-		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	if !validLogin {
-		respondWithError(w, "Incorrect Username or Password", http.StatusUnauthorized)
+	if validLoginErr != nil || !validLogin {
+		respondWithError(w, "Invalid Username or Password", http.StatusUnauthorized)
 		return
 	}
 
@@ -96,6 +92,7 @@ func (s *Server) loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	subject, _ := token.Claims.GetSubject()
 	user, getUserErr := s.User.GetUser(subject)
 	if getUserErr != nil {
+		fmt.Println(getUserErr)
 		respondWithError(w, "Internal Server Error", http.StatusUnauthorized)
 		return
 	}

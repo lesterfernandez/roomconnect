@@ -1,7 +1,7 @@
 import { Card, Stack, CardBody, Heading, Text, Box, Button, Avatar } from "@chakra-ui/react";
-import type { UserProfile } from "../../types";
+import type { UserAttributes } from "../../types";
 
-export default function UserCard(props: { profile: UserProfile }) {
+export default function UserCard(props: { profile: UserAttributes }) {
   return (
     <Card direction={{ base: "column", sm: "row" }} variant="outline">
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">

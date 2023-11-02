@@ -38,7 +38,7 @@ export default function EditProfile() {
       setUserProfile({ ...userProfile, [name]: e.target.value });
 
   return (
-    <Container minH="100%">
+    <Container>
       <Stack py="16" gap="12">
         <Avatar mx="auto" size="2xl" src={userProfile.profilePic} />
 

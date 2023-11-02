@@ -10,10 +10,10 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import type { UserProfile } from "../../types";
+import type { UserAttributes } from "../../types";
 import attributes from "../../attribute-text";
 
-export default function UserCard(props: { profile: UserProfile }) {
+export default function UserCard(props: { profile: UserAttributes }) {
   return (
     <Card direction={{ base: "column", sm: "row" }} p="2" variant="outline">
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">

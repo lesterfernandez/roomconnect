@@ -33,13 +33,11 @@ func searchUsers(w http.ResponseWriter, res *http.Request) {
 	}
 
 	users, usersErr := data.SearchUsers(queryFields)
-
 	if usersErr != nil {
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 
 	usersJson, err := json.Marshal(users)
-
 	if err != nil {
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return

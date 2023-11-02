@@ -23,19 +23,7 @@ func NewUserRepo() *UserRepo {
 	}
 }
 
-type RegisterBody struct {
-	ProfilePic  string
-	DisplayName string
-	Budget      int
-	Gender      string
-	Cleanliness int
-	Loudness    int
-	Coed        bool
-	Username    string
-	Password    string
-}
-
-type UserProfile struct {
+type UserAttributes struct {
 	ProfilePic  string `db:"profile_pic" json:"profilePic"`
 	DisplayName string `db:"display_name" json:"displayName"`
 	Budget      int    `db:"budget_tier" json:"budget"`
@@ -48,6 +36,16 @@ type UserProfile struct {
 type UserCredentials struct {
 	Username string
 	Password string
+}
+
+type UserProfile struct {
+	Username string `db:"username" json:"username"`
+	UserAttributes
+}
+
+type RegisterBody struct {
+	UserCredentials
+	UserAttributes
 }
 
 func HashPassword(password string) (string, error) {
@@ -95,7 +93,8 @@ func createUser(newUser RegisterBody) error {
 
 func getUser(username string) (*UserProfile, error) {
 	rows, queryErr := pool.Query(context.Background(), `
-		SELECT  display_name, 
+		SELECT  username,
+				display_name, 
 				gender, 
 				profile_pic,
 				clean_tier, 
@@ -129,8 +128,8 @@ func userExists(username string) (bool, error) {
 
 func isValidLogin(username string, password string) (bool, error) {
 	var passhash string
-	queryErr := pool.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 
+	queryErr := pool.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 	if queryErr != nil {
 		return false, queryErr
 	}

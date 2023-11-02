@@ -113,7 +113,6 @@ func getUser(username string) (*UserProfile, error) {
 		return &UserProfile{}, collectErr
 	}
 
-	userProfile.Username = username
 	return userProfile, nil
 }
 

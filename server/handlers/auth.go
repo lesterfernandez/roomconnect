@@ -10,7 +10,7 @@ import (
 
 type ctxKey string
 
-var ContextKey ctxKey
+const ContextKey = ctxKey("token")
 
 func AuthenticateRoute(handler http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +39,6 @@ func AuthenticateRoute(handler http.Handler) http.Handler {
 			return
 		}
 
-		ContextKey = ctxKey("token")
 		ctx := context.WithValue(context.Background(), ContextKey, token)
 		reqWithContext := r.WithContext(ctx)
 

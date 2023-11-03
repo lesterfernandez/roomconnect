@@ -107,20 +107,19 @@ func (s *Server) editProfile(w http.ResponseWriter, req *http.Request) {
 
 	subject, tokenErr := verifiedToken.Claims.GetSubject()
 	if tokenErr != nil {
-		//not sure what error msg is best here
-		respondWithError(w, "Invalid Token", http.StatusBadRequest)
+		respondWithError(w, "Invalid Token", http.StatusUnauthorized)
 		return
 	}
 
 	user := data.UserProfile{}
 	decodeErr := json.NewDecoder(req.Body).Decode(&user)
 	if decodeErr != nil {
-		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		respondWithError(w, "Invalid Profile Format", http.StatusBadRequest)
 		return
 	}
 	updatedUser, updateErr := s.User.EditUser(&user, subject)
 	if updateErr != nil {
-		respondWithError(w, "Internal Server Error: Bad DB Query", http.StatusInternalServerError)
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 

@@ -145,19 +145,19 @@ func isValidLogin(username string, password string) (bool, error) {
 }
 
 func editUser(user *UserProfile, username string) (*UserProfile, error) {
+	userProfileColumns := `profile_pic, display_name, budget_tier, gender, clean_tier, loud_tier, coed`
 	updateQuery := `UPDATE users SET profile_pic = $1, display_name = $2, budget_tier = $3, gender = $4,
 	clean_tier = $5, loud_tier = $6, coed = $7
-	WHERE username = $8`
-
+	WHERE username = $8 
+	RETURNING ` + userProfileColumns
 	queryValues := []any{user.ProfilePic, user.DisplayName, user.Budget, user.Gender, user.Cleanliness, user.Loudness, user.Coed, username}
-	tag, err := pool.Exec(context.Background(), updateQuery, queryValues...)
-	if err != nil || !tag.Update() {
+
+	var updatedUser = UserProfile{}
+	row := pool.QueryRow(context.Background(), updateQuery, queryValues...)
+
+	if err := row.Scan(&updatedUser.ProfilePic, &updatedUser.DisplayName, &updatedUser.Budget, &updatedUser.Gender, &updatedUser.Cleanliness, &updatedUser.Loudness, &updatedUser.Coed); err != nil {
 		return &UserProfile{}, err
 	}
 
-	updatedUser, err := getUser(username)
-	if err != nil {
-		return &UserProfile{}, err
-	}
-	return updatedUser, nil
+	return &updatedUser, nil
 }

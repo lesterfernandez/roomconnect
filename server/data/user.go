@@ -50,13 +50,13 @@ type RegisterBody struct {
 	UserAttributes
 }
 
-func HashPassword(password string) (string, error) {
+func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(bytes), err
 }
 
 func createUser(newUser RegisterBody) error {
-	passhash, hashError := HashPassword(newUser.Password)
+	passhash, hashError := hashPassword(newUser.Password)
 
 	if hashError != nil {
 		return hashError
@@ -96,6 +96,7 @@ func createUser(newUser RegisterBody) error {
 func getUser(username string) (*UserProfile, error) {
 	rows, queryErr := pool.Query(context.Background(), `
 		SELECT  username,
+				profile_pic,
 				display_name, 
 				gender, 
 				profile_pic,

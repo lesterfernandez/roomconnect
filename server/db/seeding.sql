@@ -49,7 +49,7 @@ VALUES
     (
         'pbeesle',
         123413535,
-        'Pam Haplert',
+        'Pam Halpert',
         'https://helios-i.mashable.com/imagery/articles/03gdvoXyxNZOb3BhLSIqM0W/hero-image.fill.size_1200x900.v1623370474.jpg',
         'Female',
         2,
@@ -58,11 +58,22 @@ VALUES
         FALSE
     ),
     (
+        'kkapoor',
+        123413535,
+        'Kelly Kapoor',
+        'https://imgix.bustle.com/uploads/image/2019/1/23/cfc79329-9a8e-4595-b1f9-b31f725fbc28-kelly-kapoor-office.jpg?w=1200&h=630&fit=crop&crop=faces&fm=jpg',
+        'Female',
+        2,
+        2,
+        3,
+        FALSE
+    ),
+    (
         'wwhite',
         123413535,
         'Walter White',
-        'https://imgix.bustle.com/uploads/image/2019/1/23/cfc79329-9a8e-4595-b1f9-b31f725fbc28-kelly-kapoor-office.jpg?w=1200&h=630&fit=crop&crop=faces&fm=jpg',
-        'Female',
+        'https://www.shareicon.net/data/256x256/2015/08/17/86684_cat_256x256.png',
+        'Male',
         2,
         2,
         3,

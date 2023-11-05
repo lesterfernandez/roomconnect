@@ -25,7 +25,8 @@ func NewUserRepo() *UserRepo {
 	}
 }
 
-type UserAttributes struct {
+type UserProfile struct {
+	Username    string `db:"username" json:"username"`
 	ProfilePic  string `db:"profile_pic" json:"profilePic"`
 	DisplayName string `db:"display_name" json:"displayName"`
 	Budget      int    `db:"budget_tier" json:"budget"`
@@ -40,23 +41,18 @@ type UserCredentials struct {
 	Password string
 }
 
-type UserProfile struct {
-	Username string `db:"username" json:"username"`
-	UserAttributes
-}
-
 type RegisterBody struct {
-	UserCredentials
-	UserAttributes
+	UserProfile
+	Password string
 }
 
-func HashPassword(password string) (string, error) {
+func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(bytes), err
 }
 
 func createUser(newUser RegisterBody) error {
-	passhash, hashError := HashPassword(newUser.Password)
+	passhash, hashError := hashPassword(newUser.Password)
 
 	if hashError != nil {
 		return hashError
@@ -96,9 +92,9 @@ func createUser(newUser RegisterBody) error {
 func getUser(username string) (*UserProfile, error) {
 	rows, queryErr := pool.Query(context.Background(), `
 		SELECT  username,
+				profile_pic,
 				display_name, 
 				gender, 
-				profile_pic,
 				clean_tier, 
 				budget_tier, 
 				loud_tier, 

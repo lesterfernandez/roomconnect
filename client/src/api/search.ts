@@ -1,8 +1,8 @@
 import { searchResultSchema } from "../schemas";
 import { getToken } from "../token";
-import type { SearchBody, UserAttributes } from "../types";
+import type { SearchBody, UserProfile } from "../types";
 
-export const searchUsers = async (filter: Partial<SearchBody>): Promise<UserAttributes[]> => {
+export const searchUsers = async (filter: Partial<SearchBody>): Promise<UserProfile[]> => {
   const url = new URL("/search", import.meta.env.VITE_BACKEND_URL);
 
   for (const [key, val] of Object.entries(filter)) {

@@ -18,15 +18,11 @@ func TestRegister(t *testing.T) {
 			CreateUser: func(newUser data.RegisterBody) error { return nil },
 			UserExists: func(username string) (bool, error) { return false, nil },
 		}
-
 		r := CreateHandler(&Server{User: &mockUserRepo})
 
-		testUser := data.RegisterBody{
-			UserCredentials: data.UserCredentials{
-				Username: "hank",
-				Password: "turtle",
-			},
-			UserAttributes: data.UserAttributes{
+		payload := data.RegisterBody{
+			UserProfile: data.UserProfile{
+				Username:    "hanker",
 				ProfilePic:  "url",
 				DisplayName: "hank",
 				Budget:      3,
@@ -35,25 +31,29 @@ func TestRegister(t *testing.T) {
 				Loudness:    3,
 				Coed:        true,
 			},
+			Password: "turtle",
 		}
+		b, _ := json.Marshal(payload)
 
-		reqBody, _ := json.Marshal(testUser)
-		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewReader(b))
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
+		res, _ := io.ReadAll(w.Result().Body)
 
-		res := w.Result()
-		resBody, _ := io.ReadAll(res.Body)
-		tokenRes := data.TokenMessage{}
-		unmarshalErr := json.Unmarshal(resBody, &tokenRes)
-
-		if unmarshalErr != nil {
-			t.Fatalf("Could not parse response: %v\n", unmarshalErr)
+		errMsg := data.ApiError{}
+		err := json.Unmarshal(res, &errMsg)
+		if len(errMsg.ErrorMessage) > 0 {
+			t.Fatalf("/register responded with error message %#v", errMsg)
+		}
+		if err != nil {
+			t.Fatal("/register responded with invalid json", err)
 		}
 
-		newToken, _ := token.CreateJWT(testUser.Username)
-		if newToken != tokenRes.Token {
-			t.Fatalf("JWT did not generate correctly")
+		tokenRes := data.TokenMessage{}
+		_ = json.Unmarshal(res, &tokenRes)
+		token, _ := token.CreateJWT(payload.Username)
+		if token != tokenRes.Token {
+			t.Fatalf("JWT did not generate correctly %v != %v", token, tokenRes.Token)
 		}
 	})
 
@@ -62,36 +62,34 @@ func TestRegister(t *testing.T) {
 			CreateUser: func(newUser data.RegisterBody) error { return nil },
 			UserExists: func(username string) (bool, error) { return true, nil },
 		}
-
 		r := CreateHandler(&Server{User: &mockUserRepo})
 
-		reqBody, _ := json.Marshal(data.RegisterBody{
-			UserCredentials: data.UserCredentials{
-				Username: "hank",
-				Password: "turtle",
-			},
-			UserAttributes: data.UserAttributes{
+		b, _ := json.Marshal(data.RegisterBody{
+			UserProfile: data.UserProfile{
+				Username:    "bill12",
 				ProfilePic:  "url",
-				DisplayName: "hank",
+				DisplayName: "Billy",
 				Budget:      3,
 				Gender:      "Male",
 				Cleanliness: 3,
 				Loudness:    3,
 				Coed:        true,
 			},
+			Password: "turtle",
 		})
 
-		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/register", bytes.NewReader(b))
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
+		res, _ := io.ReadAll(w.Result().Body)
 
-		res := w.Result()
-		resBody, _ := io.ReadAll(res.Body)
-		errorRes := data.ApiError{}
-		unmarshalErr := json.Unmarshal(resBody, &errorRes)
-
-		if unmarshalErr != nil {
-			t.Fatalf("ApiError Unmarshal Error: %v\n", unmarshalErr)
+		errMsg := data.ApiError{}
+		err := json.Unmarshal(res, &errMsg)
+		if err != nil {
+			t.Fatal("/register responded with invalid json", err)
+		}
+		if len(errMsg.ErrorMessage) == 0 {
+			t.Fatalf("/register did not respond with error message %#v", errMsg)
 		}
 	})
 

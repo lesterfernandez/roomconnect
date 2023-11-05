@@ -14,8 +14,8 @@ import {
 import React, { useState } from "react";
 import type { UserProfile } from "../types";
 import { userProfileSchema } from "../schemas";
-import { useProfileStore } from "../store";
 import SegmentedControl from "./ui/SegmentedControl";
+import { useProfileStore } from "../store/user";
 
 export default function EditProfile() {
   const user = useProfileStore();

@@ -1,4 +1,5 @@
-export type UserAttributes = {
+export type UserProfile = {
+  username: string;
   displayName: string;
   profilePic?: string;
   gender: string;
@@ -6,10 +7,6 @@ export type UserAttributes = {
   cleanliness: 0 | 1 | 2 | 3;
   loudness: 0 | 1 | 2 | 3;
   coed: boolean;
-};
-
-export type UserProfile = UserAttributes & {
-  username: string;
 };
 
 export type UserCredentials = {

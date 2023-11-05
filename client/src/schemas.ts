@@ -17,9 +17,7 @@ const userProfileBodySchema = z.object({
 
 export const userProfileSchema = userProfileBodySchema.or(apiErrorSchema);
 
-export const searchResultSchema = z
-  .array(userProfileBodySchema.omit({ username: true }))
-  .or(apiErrorSchema);
+export const searchResultSchema = z.array(userProfileBodySchema).or(apiErrorSchema);
 
 export const tokenMessageSchema = z.object({
   token: z.string(),

@@ -7,11 +7,12 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func SearchUsers(queryFields [][2]string) ([]*UserAttributes, error) {
+func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
 	var queryValues []any
 
 	sqlQuery := `
-		SELECT 	display_name,
+		SELECT 	username,
+				display_name,
 				gender,
 				profile_pic,
 				clean_tier,
@@ -44,7 +45,7 @@ func SearchUsers(queryFields [][2]string) ([]*UserAttributes, error) {
 		return nil, err
 	}
 
-	usersFound, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[UserAttributes])
+	usersFound, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[UserProfile])
 	if err != nil {
 		return nil, err
 	}

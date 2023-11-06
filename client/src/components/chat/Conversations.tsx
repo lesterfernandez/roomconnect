@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
+import { VStack, Tag } from "@chakra-ui/react";
+import ChatInput from "./ChatInput";
 import { useMessageStore } from "../../store/message";
-import { VStack, Tag, Text } from "@chakra-ui/react";
 
 export default function Conversations() {
   const { username } = useParams();
@@ -8,7 +9,7 @@ export default function Conversations() {
   const conversations = username ? messages[username] ?? [] : [];
 
   return (
-    <VStack h="100%" w="100%" flexBasis="70%" overflow="scroll">
+    <VStack h="100%" w="100%" overflow="scroll" justifyContent="flex-end" px="4" pb="4">
       {conversations.map(conversation => (
         <VStack alignSelf={conversation.from === username ? "flex-start" : "flex-end"} gap="0">
           <Tag
@@ -18,9 +19,9 @@ export default function Conversations() {
           >
             {conversation.content}
           </Tag>
-          <Text>By {conversation.from}</Text>
         </VStack>
       ))}
+      <ChatInput />
     </VStack>
   );
 }

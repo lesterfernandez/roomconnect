@@ -30,7 +30,7 @@ export default function Chat() {
   }, []);
 
   return (
-    <HStack h="full">
+    <HStack h="full" gap="0">
       <VStack
         divider={<StackDivider borderColor="gray.200" my="0 !important" />}
         w="18rem"

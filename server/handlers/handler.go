@@ -34,7 +34,7 @@ func CreateHandler(s *Server) http.Handler {
 		// Authenticated routes
 		r.Get("/search", searchUsers)
 		r.Get("/chat", s.handleChat)
-		r.Put("/editprofile", s.editProfile)
+		r.Put("/profile", s.editProfile)
 	})
 
 	return r

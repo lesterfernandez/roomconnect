@@ -28,8 +28,11 @@ func main() {
 
 	customHandler := handlers.CreateHandler(&s)
 
-	data.Connect()
-	defer data.Close()
+	data.ConnectDatabase()
+	defer data.CloseDatabase()
+
+	data.ConnectRedis()
+	defer data.CloseRedis()
 
 	fmt.Println("Server started on Port 3000")
 	http.ListenAndServe(":3000", customHandler)

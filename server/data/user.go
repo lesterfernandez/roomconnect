@@ -142,10 +142,17 @@ func isValidLogin(username string, password string) (bool, error) {
 
 func editUser(user *UserProfile, username string) (*UserProfile, error) {
 	userProfileColumns := `profile_pic, display_name, budget_tier, gender, clean_tier, loud_tier, coed`
-	updateQuery := `UPDATE users SET profile_pic = $1, display_name = $2, budget_tier = $3, gender = $4,
-	clean_tier = $5, loud_tier = $6, coed = $7
-	WHERE username = $8 
-	RETURNING ` + userProfileColumns
+	updateQuery := `
+		UPDATE users 
+		SET profile_pic = $1, 
+			display_name = $2, 
+			budget_tier = $3, 
+			gender = $4,
+			clean_tier = $5, 
+			loud_tier = $6, 
+			coed = $7
+		WHERE username = $8 
+		RETURNING ` + userProfileColumns
 	queryValues := []any{user.ProfilePic, user.DisplayName, user.Budget, user.Gender, user.Cleanliness, user.Loudness, user.Coed, username}
 
 	var updatedUser = UserProfile{}

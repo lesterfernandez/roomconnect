@@ -20,7 +20,7 @@ func AuthenticateRoute(handler http.Handler) http.Handler {
 
 		// Check if the Auth Header has valid format
 		if len(authHeader) == 0 || !strings.Contains(authHeader, " ") {
-			respondWithError(w, "Invalid token", http.StatusBadRequest)
+			respondWithError(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 
@@ -28,7 +28,7 @@ func AuthenticateRoute(handler http.Handler) http.Handler {
 		splitAuthHeader := strings.Split(authHeader, " ")
 
 		if len(splitAuthHeader) != 2 {
-			respondWithError(w, "Invalid token format", http.StatusBadRequest)
+			respondWithError(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
 

@@ -1,14 +1,11 @@
 import { Input, Button, HStack } from "@chakra-ui/react";
 import { useState } from "react";
-import { sendMessage } from "../../api/chat";
 import { useParams } from "react-router-dom";
 import type { Message } from "../../types";
-import { useProfileStore } from "../../store";
 
 export default function ChatInput() {
   const [message, setMessage] = useState("");
   const { username } = useParams();
-  const user = useProfileStore();
 
   return (
     <HStack width="100%" gap="0">
@@ -29,7 +26,8 @@ export default function ChatInput() {
             from: "",
             to: username,
           };
-          sendMessage(msg);
+          console.log(msg);
+          // sendMessage(msg);
         }}
       >
         Send

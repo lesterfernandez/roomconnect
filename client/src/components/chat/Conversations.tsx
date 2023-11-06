@@ -10,8 +10,12 @@ export default function Conversations() {
 
   return (
     <VStack h="100%" w="100%" overflow="scroll" justifyContent="flex-end" px="4" pb="4">
-      {conversations.map(conversation => (
-        <VStack alignSelf={conversation.from === username ? "flex-start" : "flex-end"} gap="0">
+      {conversations.map((conversation, index) => (
+        <VStack
+          alignSelf={conversation.from === username ? "flex-start" : "flex-end"}
+          gap="0"
+          key={index}
+        >
           <Tag
             size="lg"
             variant="solid"

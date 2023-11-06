@@ -36,3 +36,15 @@ export type Message = {
   to: string;
   content: string;
 };
+
+export type ServerEvent =
+  | {
+      type: "message";
+      from: string;
+      to: string;
+      content: string;
+    }
+  | {
+      type: "load";
+      conversations: Message[];
+    };

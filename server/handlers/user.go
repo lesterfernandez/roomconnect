@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"strings"
 
@@ -31,7 +32,6 @@ func (s *Server) registerUser(w http.ResponseWriter, res *http.Request) {
 
 	createUserErr := s.User.CreateUser(newUser)
 	if createUserErr != nil {
-		fmt.Println("createUserErr", createUserErr)
 		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -56,12 +56,8 @@ func (s *Server) loginUser(w http.ResponseWriter, res *http.Request) {
 	}
 
 	validLogin, validLoginErr := s.User.IsValidLogin(returningUser.Username, returningUser.Password)
-	if validLoginErr != nil {
-		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	if !validLogin {
-		respondWithError(w, "Incorrect Username or Password", http.StatusUnauthorized)
+	if validLoginErr != nil || !validLogin {
+		respondWithError(w, "Invalid Username or Password", http.StatusUnauthorized)
 		return
 	}
 
@@ -96,10 +92,41 @@ func (s *Server) loginImplicitly(w http.ResponseWriter, res *http.Request) {
 	subject, _ := token.Claims.GetSubject()
 	user, getUserErr := s.User.GetUser(subject)
 	if getUserErr != nil {
+		fmt.Println(getUserErr)
 		respondWithError(w, "Internal Server Error", http.StatusUnauthorized)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
+}
+
+func (s *Server) editProfile(w http.ResponseWriter, req *http.Request) {
+
+	verifiedToken := req.Context().Value(ContextKey).(*jwt.Token)
+
+	subject, tokenErr := verifiedToken.Claims.GetSubject()
+	if tokenErr != nil {
+		respondWithError(w, "Invalid Token", http.StatusUnauthorized)
+		return
+	}
+
+	user := data.UserProfile{}
+	decodeErr := json.NewDecoder(req.Body).Decode(&user)
+	if decodeErr != nil {
+		respondWithError(w, "Invalid Profile Format", http.StatusBadRequest)
+		return
+	}
+	updatedUser, updateErr := s.User.EditUser(&user, subject)
+	if updateErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	encodeErr := json.NewEncoder(w).Encode(updatedUser)
+	if encodeErr != nil {
+		respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
 }

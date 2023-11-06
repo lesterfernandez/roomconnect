@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useMessageStore } from "../../store";
+import { useMessageStore } from "../../store/message";
 import { VStack, Tag, Text } from "@chakra-ui/react";
 
 export default function Conversations() {
   const { username } = useParams();
   const messages = useMessageStore();
-  const conversations = messages[username ?? ""];
+  const conversations = username ? messages[username] ?? [] : [];
 
   return (
     <VStack h="100%" w="100%" flexBasis="70%" overflow="scroll">

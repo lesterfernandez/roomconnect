@@ -16,35 +16,32 @@ func TestLogin(t *testing.T) {
 		MockUserRepo := data.UserRepo{
 			IsValidLogin: func(username, password string) (bool, error) { return false, nil },
 		}
-
 		r := CreateHandler(&Server{User: &MockUserRepo})
 
-		reqBody, _ := json.Marshal(data.UserCredentials{
+		b, _ := json.Marshal(data.UserCredentials{
 			Username: "Hank",
 			Password: "Password",
 		})
-		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(b))
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
+		res, _ := io.ReadAll(w.Result().Body)
 
-		res := w.Result()
-		resBody, _ := io.ReadAll(res.Body)
 		apiErr := data.ApiError{}
-		unmarshalErr := json.Unmarshal(resBody, &apiErr)
+		err := json.Unmarshal(res, &apiErr)
 
-		if unmarshalErr != nil {
-			t.Fatalf("Unmarshal Error: %v\n", unmarshalErr)
+		if err != nil {
+			t.Fatalf("/login responded with invalid json: %#v\n", err)
 		}
-
-		t.Logf("Received ApiErr: %v\n", apiErr.ErrorMessage)
-
+		if len(apiErr.ErrorMessage) == 0 {
+			t.Fatalf("/login did not respond with an error message: %#v", string(res))
+		}
 	})
 
 	t.Run("Valid Login", func(t *testing.T) {
 		mockRepo := data.UserRepo{
 			IsValidLogin: func(username, password string) (bool, error) { return true, nil },
 		}
-
 		r := CreateHandler(&Server{User: &mockRepo})
 
 		reqBody, _ := json.Marshal(data.UserCredentials{
@@ -54,14 +51,21 @@ func TestLogin(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
+		res, _ := io.ReadAll(w.Result().Body)
 
-		res := w.Result()
-		resBody, _ := io.ReadAll(res.Body)
 		tokenRes := data.TokenMessage{}
-		unmarshalErr := json.Unmarshal(resBody, &tokenRes)
+		err := json.Unmarshal(res, &tokenRes)
 
-		if unmarshalErr != nil {
-			t.Fatalf("Unmarshal Error: %v\n", unmarshalErr)
+		if err != nil {
+			t.Fatalf("/login responded with invalid json: %#v\n", string(res))
+		}
+		if len(tokenRes.Token) == 0 {
+			t.Fatalf("/login did not respond with a token: %#v\n", string(res))
+		}
+
+		apiErr := data.ApiError{}
+		if _ = json.Unmarshal(res, &apiErr); len(apiErr.ErrorMessage) > 0 {
+			t.Fatalf("/login responded with error message: %#v\n", string(res))
 		}
 	})
 }

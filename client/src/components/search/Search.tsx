@@ -1,9 +1,9 @@
 import { FormControl, FormLabel, Button, Select, Container, Stack, Flex } from "@chakra-ui/react";
 import React, { useState } from "react";
 import UserCard from "./UserCard";
-import { useSearchStore } from "../../store";
 import { searchUsers } from "../../api/search";
 import type { SearchBody } from "../../types";
+import { useSearchStore } from "../../store/search";
 
 export default function Search() {
   const { settings, results } = useSearchStore();

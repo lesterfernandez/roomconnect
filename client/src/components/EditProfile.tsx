@@ -14,8 +14,8 @@ import {
 import React, { useState } from "react";
 import type { UserProfile } from "../types";
 import { userProfileSchema } from "../schemas";
-import { useProfileStore } from "../store";
 import SegmentedControl from "./ui/SegmentedControl";
+import { useProfileStore } from "../store/user";
 
 export default function EditProfile() {
   const user = useProfileStore();
@@ -38,7 +38,7 @@ export default function EditProfile() {
       setUserProfile({ ...userProfile, [name]: e.target.value });
 
   return (
-    <Container minH="100%">
+    <Container>
       <Stack py="16" gap="12">
         <Avatar mx="auto" size="2xl" src={userProfile.profilePic} />
 

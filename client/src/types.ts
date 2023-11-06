@@ -1,6 +1,7 @@
 export type UserProfile = {
-  profilePic?: string;
+  username: string;
   displayName: string;
+  profilePic?: string;
   gender: string;
   budget: 0 | 1 | 2 | 3 | 4;
   cleanliness: 0 | 1 | 2 | 3;
@@ -29,11 +30,6 @@ export type SearchBody = {
   loudness: string;
   coed: string;
 };
-
-export interface SearchStore {
-  settings: SearchBody;
-  results: UserProfile[];
-}
 
 export type Message = {
   from: string;

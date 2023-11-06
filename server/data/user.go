@@ -12,6 +12,7 @@ type UserRepo struct {
 	GetUser      func(username string) (*UserProfile, error)
 	UserExists   func(username string) (bool, error)
 	IsValidLogin func(username string, password string) (bool, error)
+	EditUser     func(user *UserProfile, username string) (*UserProfile, error)
 }
 
 func NewUserRepo() *UserRepo {
@@ -20,22 +21,12 @@ func NewUserRepo() *UserRepo {
 		GetUser:      getUser,
 		UserExists:   userExists,
 		IsValidLogin: isValidLogin,
+		EditUser:     editUser,
 	}
 }
 
-type RegisterBody struct {
-	ProfilePic  string
-	DisplayName string
-	Budget      int
-	Gender      string
-	Cleanliness int
-	Loudness    int
-	Coed        bool
-	Username    string
-	Password    string
-}
-
 type UserProfile struct {
+	Username    string `db:"username" json:"username"`
 	ProfilePic  string `db:"profile_pic" json:"profilePic"`
 	DisplayName string `db:"display_name" json:"displayName"`
 	Budget      int    `db:"budget_tier" json:"budget"`
@@ -50,13 +41,18 @@ type UserCredentials struct {
 	Password string
 }
 
-func HashPassword(password string) (string, error) {
+type RegisterBody struct {
+	UserProfile
+	Password string
+}
+
+func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(bytes), err
 }
 
 func createUser(newUser RegisterBody) error {
-	passhash, hashError := HashPassword(newUser.Password)
+	passhash, hashError := hashPassword(newUser.Password)
 
 	if hashError != nil {
 		return hashError
@@ -95,9 +91,10 @@ func createUser(newUser RegisterBody) error {
 
 func getUser(username string) (*UserProfile, error) {
 	rows, queryErr := pool.Query(context.Background(), `
-		SELECT  display_name, 
-				gender, 
+		SELECT  username,
 				profile_pic,
+				display_name, 
+				gender, 
 				clean_tier, 
 				budget_tier, 
 				loud_tier, 
@@ -129,8 +126,8 @@ func userExists(username string) (bool, error) {
 
 func isValidLogin(username string, password string) (bool, error) {
 	var passhash string
-	queryErr := pool.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 
+	queryErr := pool.QueryRow(context.Background(), "SELECT passhash FROM users WHERE username=$1", username).Scan(&passhash)
 	if queryErr != nil {
 		return false, queryErr
 	}
@@ -141,4 +138,22 @@ func isValidLogin(username string, password string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func editUser(user *UserProfile, username string) (*UserProfile, error) {
+	userProfileColumns := `profile_pic, display_name, budget_tier, gender, clean_tier, loud_tier, coed`
+	updateQuery := `UPDATE users SET profile_pic = $1, display_name = $2, budget_tier = $3, gender = $4,
+	clean_tier = $5, loud_tier = $6, coed = $7
+	WHERE username = $8 
+	RETURNING ` + userProfileColumns
+	queryValues := []any{user.ProfilePic, user.DisplayName, user.Budget, user.Gender, user.Cleanliness, user.Loudness, user.Coed, username}
+
+	var updatedUser = UserProfile{}
+	row := pool.QueryRow(context.Background(), updateQuery, queryValues...)
+
+	if err := row.Scan(&updatedUser.ProfilePic, &updatedUser.DisplayName, &updatedUser.Budget, &updatedUser.Gender, &updatedUser.Cleanliness, &updatedUser.Loudness, &updatedUser.Coed); err != nil {
+		return &UserProfile{}, err
+	}
+
+	return &updatedUser, nil
 }

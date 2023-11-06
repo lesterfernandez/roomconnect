@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { HStack, VStack, StackDivider, Text, Button } from "@chakra-ui/react";
-import { useMessageStore } from "../../store";
+import { useMessageStore } from "../../store/message";
 
 export default function Chat() {
   function seedUsernames() {

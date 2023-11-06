@@ -7,8 +7,8 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
-	var queryValues []any
+func SearchUsers(queryFields [][2]string, username string) ([]*UserProfile, error) {
+	queryValues := []any{username}
 
 	sqlQuery := `
 		SELECT 	username,
@@ -19,8 +19,7 @@ func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
 				budget_tier,
 				loud_tier,
 				coed
-		FROM users
-		`
+		FROM users WHERE username != $1 `
 
 	// Add AND WHERE clauses in SQL string
 	for idx, slice := range queryFields {
@@ -28,12 +27,8 @@ func SearchUsers(queryFields [][2]string) ([]*UserProfile, error) {
 		value := slice[1]
 
 		// build clauses dynamically
-		clause := "WHERE"
-		if idx > 0 {
-			clause = "AND"
-		}
-
-		sqlQuery += fmt.Sprintf("%s %s=$%d ", clause, field, idx+1)
+		clause := "AND"
+		sqlQuery += fmt.Sprintf("%s %s=$%d ", clause, field, idx+2)
 
 		// store values in order
 		queryValues = append(queryValues, value)

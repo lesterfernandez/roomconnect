@@ -32,7 +32,7 @@ func CreateHandler(s *Server) http.Handler {
 		r.Use(AuthenticateRoute)
 
 		// Authenticated routes
-		r.Get("/search", searchUsers)
+		r.Get("/search", s.searchUsers)
 		r.Get("/chat", s.handleChat)
 		r.Put("/profile", s.editProfile)
 	})

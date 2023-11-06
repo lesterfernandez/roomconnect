@@ -16,6 +16,7 @@ import type { UserProfile } from "../types";
 import { userProfileSchema } from "../schemas";
 import SegmentedControl from "./ui/SegmentedControl";
 import { useProfileStore } from "../store/user";
+import { editProfile } from "../api/profile";
 
 export default function EditProfile() {
   const user = useProfileStore();
@@ -25,12 +26,27 @@ export default function EditProfile() {
   const [editLoading, setEditLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
-    const parsedUserProfile = userProfileSchema.safeParse(userProfile);
-    if (!parsedUserProfile.success) {
-      setError("Invalid form.");
+  console.log(userProfile);
+
+  const handleEditProfile = () => {
+    setError("");
+
+    const parsedUserProfile = userProfileSchema.parse(userProfile);
+    if ("errorMessage" in parsedUserProfile) {
+      setError(parsedUserProfile.errorMessage);
       return;
     }
+
+    setEditLoading(true);
+    editProfile(userProfile)
+      .then(res => {
+        console.log(res);
+        useProfileStore.setState(res);
+      })
+      .catch(error => {
+        setError(error.message);
+      })
+      .finally(() => setEditLoading(false));
   };
 
   const handleChange =
@@ -105,14 +121,7 @@ export default function EditProfile() {
 
         <Stack>
           <Text textColor="red">{error}</Text>
-          <Button
-            isLoading={editLoading}
-            colorScheme="orange"
-            onClick={() => {
-              setEditLoading(true);
-              handleSubmit().then(() => setEditLoading(false));
-            }}
-          >
+          <Button isLoading={editLoading} colorScheme="orange" onClick={handleEditProfile}>
             Save Profile
           </Button>
         </Stack>

@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS messages (
     from_user varchar(255) REFERENCES users(username) ON DELETE CASCADE,
     to_user varchar(255) REFERENCES users(username) ON DELETE CASCADE,
-    content TEXT
+    content TEXT NOT NULL,
+    created_date TIMESTAMPTZ DEFAULT NOW()
 );
 
 

@@ -29,16 +29,27 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 	// Subscribe to Redis channel and receive messages for user
 	go data.JoinChannel(conn, subject)
 
-	// Listen for messages by user
 	for {
-		chatMessage := data.ChatMessage{}
+		chatMessage := data.ChatMessage{Type: "message"}
 
-		err := conn.ReadJSON(&chatMessage)
-		if err != nil {
-			respondWithError(w, "Internal Server Error", http.StatusInternalServerError)
-			return
+		if err := conn.ReadJSON(&chatMessage); err != nil {
+			fmt.Println("Bad Request,", err.Error())
+			continue
+		}
+
+		if verifyErr := verifyMessage(&chatMessage, subject); verifyErr != nil {
+			fmt.Println(verifyErr.Error())
+			continue
 		}
 
 		data.SendMessage(chatMessage)
 	}
+}
+
+func verifyMessage(message *data.ChatMessage, username string) error {
+	if message.From != username {
+		return fmt.Errorf("incoming ChatMessage \"from\" field does not match username")
+	}
+
+	return nil
 }

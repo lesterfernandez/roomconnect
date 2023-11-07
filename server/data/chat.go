@@ -10,10 +10,15 @@ import (
 )
 
 type ChatMessage struct {
-	Type    string `json:"type"`
-	From    string `db:"from_user" json:"from"`
+	Type    string `json:"type,omitempty"`
+	From    string `db:"from_user" json:"from,omitempty"`
 	To      string `db:"to_user" json:"to"`
 	Content string `db:"content" json:"content"`
+}
+
+type ChatMessages struct {
+	Type          string         `json:"type"`
+	Conversations []*ChatMessage `json:"conversations"`
 }
 
 func JoinChannel(conn *websocket.Conn, username string) {
@@ -28,15 +33,18 @@ func JoinChannel(conn *websocket.Conn, username string) {
 		msg, err := sub.ReceiveMessage(context.Background())
 		if err != nil {
 			fmt.Println(err.Error())
+			continue
 		}
 
 		if err := json.Unmarshal([]byte(msg.Payload), &chatMessage); err != nil {
 			fmt.Println(err.Error())
+			continue
 		}
 
-		writeErr := conn.WriteJSON(chatMessage)
+		writeErr := conn.WriteJSON(&chatMessage)
 		if writeErr != nil {
-			fmt.Println(err.Error())
+			fmt.Println(writeErr.Error())
+			continue
 		}
 	}
 }
@@ -45,7 +53,8 @@ func SendMessage(msg ChatMessage) error {
 	// Store message
 	storeErr := storeMessage(msg)
 	if storeErr != nil {
-		panic(storeErr)
+		fmt.Println("Error storing message:", msg)
+		return storeErr
 	}
 
 	// Publish to redis in JSON form
@@ -73,8 +82,7 @@ func storeMessage(message ChatMessage) error {
 		)
 		VALUES ($1,$2,$3)
 	`
-	fmt.Println(message)
-	tag, err := pool.Exec(context.Background(), sqlQuery, message.From, message.To, message.Content)
+	tag, err := pool.Exec(context.Background(), sqlQuery, &message.From, &message.To, &message.Content)
 
 	if err != nil && !tag.Insert() {
 		return err
@@ -88,19 +96,30 @@ func loadMessages(conn *websocket.Conn, username string) {
 				to_user,
 				content
 		FROM messages
-		WHERE to_user=$1
-		LIMIT 50
+		WHERE to_user=$1 OR from_user=$1
+		ORDER BY created_date DESC
+		LIMIT 50;
 		`
 
 	rows, err := pool.Query(context.Background(), sqlQuery, &username)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error querying for messages stored. user:", username, "error:", err.Error())
+		return
 	}
 
-	messages, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[ChatMessage])
+	storedMessages, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[ChatMessage])
 	if err != nil {
-		fmt.Println("Error while querying for messages stored. user:", username)
+		fmt.Println("Error collecting for messages stored. user:", username, "error:", err.Error())
 		return
+	}
+
+	if len(storedMessages) == 0 {
+		return
+	}
+
+	messages := ChatMessages{
+		Type:          "load",
+		Conversations: storedMessages,
 	}
 
 	conn.WriteJSON(messages)

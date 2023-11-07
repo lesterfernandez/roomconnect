@@ -10,6 +10,14 @@ CREATE TABLE IF NOT EXISTS users (
     clean_tier INTEGER NOT NULL CHECK (clean_tier BETWEEN 1 AND 3),
     loud_tier INTEGER NOT NULL CHECK (loud_tier BETWEEN 1 AND 3),
     coed BOOLEAN NOT NULL
-)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    from_user varchar(255) REFERENCES users(username) ON DELETE CASCADE,
+    to_user varchar(255) REFERENCES users(username) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_date TIMESTAMPTZ DEFAULT NOW()
+);
+
 
 \echo 'Finished creating all tables'

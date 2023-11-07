@@ -10,7 +10,7 @@ import (
 
 var pool *pgxpool.Pool
 
-func Connect() {
+func ConnectDatabase() {
 	name := os.Getenv("POSTGRES_DB")
 	password := os.Getenv("POSTGRES_PASSWORD")
 	host := os.Getenv("POSTGRES_HOST")
@@ -36,6 +36,6 @@ func Connect() {
 	fmt.Println("Successfully connected to database!")
 }
 
-func Close() {
+func CloseDatabase() {
 	pool.Close()
 }

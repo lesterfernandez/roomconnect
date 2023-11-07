@@ -32,18 +32,18 @@ func JoinChannel(conn *websocket.Conn, username string) {
 		// Listen for new messages
 		msg, err := sub.ReceiveMessage(context.Background())
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println(err)
 			continue
 		}
 
 		if err := json.Unmarshal([]byte(msg.Payload), &chatMessage); err != nil {
-			fmt.Println(err.Error())
+			fmt.Println(err)
 			continue
 		}
 
 		writeErr := conn.WriteJSON(&chatMessage)
 		if writeErr != nil {
-			fmt.Println(writeErr.Error())
+			fmt.Println(writeErr)
 			continue
 		}
 	}
@@ -103,13 +103,13 @@ func loadMessages(conn *websocket.Conn, username string) {
 
 	rows, err := pool.Query(context.Background(), sqlQuery, &username)
 	if err != nil {
-		fmt.Println("Error querying for messages stored. user:", username, "error:", err.Error())
+		fmt.Println("Error querying for messages stored. user:", username, "error:", err)
 		return
 	}
 
 	storedMessages, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[ChatMessage])
 	if err != nil {
-		fmt.Println("Error collecting for messages stored. user:", username, "error:", err.Error())
+		fmt.Println("Error collecting for messages stored. user:", username, "error:", err)
 		return
 	}
 

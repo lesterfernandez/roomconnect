@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
 	"github.com/lesterfernandez/roommate-finder/server/data"
+	"github.com/pkg/errors"
 )
 
 func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
@@ -33,12 +34,12 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		chatMessage := data.ChatMessage{Type: "message"}
 
 		if err := conn.ReadJSON(&chatMessage); err != nil {
-			fmt.Println("Bad Request,", err.Error())
+			fmt.Println("Bad Request,", err)
 			continue
 		}
 
 		if verifyErr := verifyMessage(&chatMessage, subject); verifyErr != nil {
-			fmt.Println(verifyErr.Error())
+			fmt.Println(verifyErr)
 			continue
 		}
 
@@ -48,7 +49,7 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 
 func verifyMessage(message *data.ChatMessage, username string) error {
 	if message.From != username {
-		return fmt.Errorf("incoming ChatMessage \"from\" field does not match username")
+		return errors.New("incoming ChatMessage \"from\" field does not match username")
 	}
 
 	return nil

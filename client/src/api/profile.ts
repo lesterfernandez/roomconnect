@@ -4,7 +4,6 @@ import { userProfileSchema } from "../schemas";
 
 export const editProfile = async (profileBody: UserProfile): Promise<UserProfile> => {
   const token = getToken();
-  console.log(profileBody.username);
 
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/profile`, {
     method: "PUT",

@@ -1,7 +1,8 @@
 import type { UserProfile } from "../types";
 import { getToken } from "../token";
+import { userProfileSchema } from "../schemas";
 
-export const editProfile = async (profileBody: UserProfile) => {
+export const editProfile = async (profileBody: UserProfile): Promise<UserProfile> => {
   const token = getToken();
   console.log(profileBody.username);
 
@@ -16,5 +17,9 @@ export const editProfile = async (profileBody: UserProfile) => {
 
   if (!response.ok) throw new Error("Server error");
 
-  return await response.json();
+  const profileMessage = await response.json();
+  const parsedProfileMessage = userProfileSchema.parse(profileMessage);
+  if ("errorMessage" in parsedProfileMessage) throw new Error("Something went wrong");
+
+  return parsedProfileMessage;
 };

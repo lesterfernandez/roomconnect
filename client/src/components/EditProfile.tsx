@@ -31,16 +31,16 @@ export default function EditProfile() {
   const handleEditProfile = () => {
     setError("");
 
-    const parsedUserProfile = userProfileSchema.parse(userProfile);
-    if ("errorMessage" in parsedUserProfile) {
-      setError(parsedUserProfile.errorMessage);
+    try {
+      userProfileSchema.parse(userProfile);
+    } catch (err) {
+      setError("Invalid entries");
       return;
     }
 
     setEditLoading(true);
     editProfile(userProfile)
       .then(res => {
-        console.log(res);
         useProfileStore.setState(res);
       })
       .catch(error => {

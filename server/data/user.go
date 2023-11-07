@@ -148,7 +148,7 @@ func editUser(user *UserProfile, username string) (*UserProfile, error) {
 	RETURNING ` + userProfileColumns
 	queryValues := []any{user.ProfilePic, user.DisplayName, user.Budget, user.Gender, user.Cleanliness, user.Loudness, user.Coed, username}
 
-	var updatedUser = UserProfile{}
+	updatedUser := UserProfile{Username: username}
 	row := pool.QueryRow(context.Background(), updateQuery, queryValues...)
 
 	if err := row.Scan(&updatedUser.ProfilePic, &updatedUser.DisplayName, &updatedUser.Budget, &updatedUser.Gender, &updatedUser.Cleanliness, &updatedUser.Loudness, &updatedUser.Coed); err != nil {

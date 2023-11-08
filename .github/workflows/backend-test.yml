@@ -1,6 +1,6 @@
 name: Test Backend Code
 on:
-  pull_request:
+  push:
     paths:
       - server/**
 jobs:

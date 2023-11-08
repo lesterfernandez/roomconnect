@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"errors"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
 	"github.com/lesterfernandez/roommate-finder/server/data"
-	"github.com/pkg/errors"
 )
 
 func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {

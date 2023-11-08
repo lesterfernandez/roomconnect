@@ -12,6 +12,7 @@ import (
 )
 
 func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
+
 	upgrader := websocket.Upgrader{}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

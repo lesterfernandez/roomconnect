@@ -5,13 +5,26 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/lesterfernandez/roommate-finder/server/token"
 )
 
 type ctxKey string
 
 const ContextKey = ctxKey("token")
+
+func AuthenticateWS(handler http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		potentialToken := r.URL.Query().Get("token")
+		reqWithCtx, verifyErr := addJWTContextToReq(potentialToken, r)
+		if verifyErr != nil {
+			respondWithError(w, "Invalid Token", http.StatusUnauthorized)
+			return
+		}
+		handler.ServeHTTP(w, reqWithCtx)
+	}
+	return http.HandlerFunc(fn)
+
+}
 
 func AuthenticateRoute(handler http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -33,21 +46,24 @@ func AuthenticateRoute(handler http.Handler) http.Handler {
 		}
 
 		JWT := splitAuthHeader[1]
-		token, err := token.VerifyJWT(JWT)
 
+		reqWithCtx, err := addJWTContextToReq(JWT, r)
 		if err != nil {
 			respondWithError(w, "Error validating token", http.StatusUnauthorized)
-			return
 		}
-
-		reqWithCtx := addContextToReq(r, token)
 		handler.ServeHTTP(w, reqWithCtx)
 	}
 	return http.HandlerFunc(fn)
 }
 
-func addContextToReq(r *http.Request, token *jwt.Token) *http.Request {
+func addJWTContextToReq(jwt string, req *http.Request) (*http.Request, error) {
+	token, verifyErr := token.VerifyJWT(jwt)
+
+	if verifyErr != nil {
+		return nil, verifyErr
+	}
+
 	ctx := context.WithValue(context.Background(), ContextKey, token)
-	reqWithContext := r.WithContext(ctx)
-	return reqWithContext
+	reqWithContext := req.WithContext(ctx)
+	return reqWithContext, nil
 }

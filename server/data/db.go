@@ -16,6 +16,9 @@ func ConnectDatabase() {
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
+	backendTest := os.Getenv("BACKEND_TEST")
+
+	fmt.Println("Backend Test: ", backendTest)
 
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", user, password, host, port, name)
 	fmt.Println("Connecting to database URI:", connectionString)

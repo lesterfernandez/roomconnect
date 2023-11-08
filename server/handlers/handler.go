@@ -33,8 +33,14 @@ func CreateHandler(s *Server) http.Handler {
 
 		// Authenticated routes
 		r.Get("/search", s.searchUsers)
-		r.Get("/chat", s.handleChat)
 		r.Put("/profile", s.editProfile)
+	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(AuthenticateWS)
+
+		r.Get("/chat", s.handleChat)
+
 	})
 
 	return r

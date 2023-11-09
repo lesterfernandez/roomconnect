@@ -3,12 +3,9 @@ services:
     container_name: docker-rmf-db
     image: postgres
     restart: unless-stopped
-    env_file:
-      - .env.template
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db/seeding.sql:/docker-entrypoint-initdb.d/seeding.sql
-      # - ./db/pgdata:/var/lib/postgresql/data # here all the db data from our container will be persisted
     ports:
       - "5001:5432"
 

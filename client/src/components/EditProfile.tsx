@@ -16,6 +16,7 @@ import type { UserProfile } from "../types";
 import { userProfileSchema } from "../schemas";
 import SegmentedControl from "./ui/SegmentedControl";
 import { useProfileStore } from "../store/user";
+import { editProfile } from "../api/edit";
 
 export default function EditProfile() {
   const user = useProfileStore();
@@ -30,6 +31,16 @@ export default function EditProfile() {
     if (!parsedUserProfile.success) {
       setError("Invalid form.");
       return;
+    }
+
+    setEditLoading(true);
+    try {
+      const user = await editProfile(userProfile);
+      useProfileStore.setState(user);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Something went wrong");
+    } finally {
+      setEditLoading(false);
     }
   };
 

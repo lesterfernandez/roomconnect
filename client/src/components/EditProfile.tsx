@@ -17,6 +17,7 @@ import { userProfileSchema } from "../schemas";
 import SegmentedControl from "./ui/SegmentedControl";
 import { useProfileStore } from "../store/user";
 import { editProfile } from "../api/edit";
+import attributes from "../attribute-text";
 
 export default function EditProfile() {
   const user = useProfileStore();
@@ -67,17 +68,16 @@ export default function EditProfile() {
           <FormLabel>Gender</FormLabel>
           <Select value={userProfile.gender} onChange={handleChange("gender")}>
             <option value="" disabled />
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-            <option value="Prefer Not To Say">Prefer Not To Say</option>
+            {Object.values(attributes.gender).map(option => {
+              return <option value={option}>{option}</option>;
+            })}
           </Select>
         </FormControl>
 
         <SegmentedControl
           activeIndex={userProfile.budget - 1}
           controlLabel="Budget"
-          labels={["<1000", "1000-2000", "2000+"]}
+          labels={attributes.budget}
           onChange={i =>
             setUserProfile({ ...userProfile, budget: (i + 1) as UserProfile["budget"] })
           }
@@ -86,7 +86,7 @@ export default function EditProfile() {
         <SegmentedControl
           activeIndex={userProfile.cleanliness - 1}
           controlLabel="Cleanliness"
-          labels={["Messy", "Average", "Super Clean"]}
+          labels={attributes.cleanliness}
           onChange={i =>
             setUserProfile({ ...userProfile, cleanliness: (i + 1) as UserProfile["cleanliness"] })
           }
@@ -95,7 +95,7 @@ export default function EditProfile() {
         <SegmentedControl
           activeIndex={userProfile.loudness - 1}
           controlLabel="Loudness"
-          labels={["Quiet", "Average", "Party Animal"]}
+          labels={attributes.loudness}
           onChange={i =>
             setUserProfile({ ...userProfile, loudness: (i + 1) as UserProfile["loudness"] })
           }

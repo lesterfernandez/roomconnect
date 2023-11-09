@@ -27,16 +27,16 @@ export default function UserCard(props: { profile: UserProfile }) {
           </Heading>
           <Wrap gap={2}>
             <WrapItem>
-              <Tag>Gender: {props.profile.gender}</Tag>
+              <Tag>Gender: {attributes.gender[props.profile.gender.toLowerCase()]}</Tag>
             </WrapItem>
             <WrapItem>
-              <Tag>Budget: {attributes.budget[props.profile.budget]}</Tag>
+              <Tag>Budget: {attributes.budget[props.profile.budget - 1]}</Tag>
             </WrapItem>
             <WrapItem>
-              <Tag>Loudness: {attributes.loudness[props.profile.loudness]}</Tag>
+              <Tag>Loudness: {attributes.loudness[props.profile.loudness - 1]}</Tag>
             </WrapItem>
             <WrapItem>
-              <Tag>Cleanliness: {attributes.cleanliness[props.profile.cleanliness]}</Tag>
+              <Tag>Cleanliness: {attributes.cleanliness[props.profile.cleanliness - 1]}</Tag>
             </WrapItem>
             <WrapItem>
               <Tag>Co-Ed: {attributes.coed[+props.profile.coed]}</Tag>

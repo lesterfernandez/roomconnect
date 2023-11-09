@@ -4,6 +4,7 @@ import UserCard from "./UserCard";
 import { searchUsers } from "../../api/search";
 import type { SearchBody } from "../../types";
 import { useSearchStore } from "../../store/search";
+import attributes from "../../attribute-text";
 
 export default function Search() {
   const { settings, results } = useSearchStore();
@@ -42,9 +43,9 @@ export default function Search() {
             value={settings.budget}
             onChange={handleChange("budget")}
           >
-            <option label="1000" value="1"></option>
-            <option label="1000-2000" value="2"></option>
-            <option label="2000+" value="3"></option>
+            {attributes.budget.map((option, index) => {
+              return <option label={option} value={index + 1}></option>;
+            })}
           </Select>
         </FormControl>
 
@@ -55,9 +56,9 @@ export default function Search() {
             value={settings.cleanliness}
             onChange={handleChange("cleanliness")}
           >
-            <option label="Messy" value="1"></option>
-            <option label="Average" value="2"></option>
-            <option label="Clean Freak" value="3"></option>
+            {attributes.cleanliness.map((option, index) => {
+              return <option label={option} value={index + 1}></option>;
+            })}
           </Select>
         </FormControl>
 
@@ -68,17 +69,17 @@ export default function Search() {
             value={settings.loudness}
             onChange={handleChange("loudness")}
           >
-            <option label="Quiet" value="1" />
-            <option label="Average" value="2" />
-            <option label="Party Animal" value="3" />
+            {attributes.loudness.map((option, index) => {
+              return <option label={option} value={index + 1}></option>;
+            })}
           </Select>
         </FormControl>
 
         <FormControl>
           <FormLabel>Co-Ed</FormLabel>
           <Select placeholder="Select" value={settings.coed} onChange={handleChange("coed")}>
-            <option label="Yes" value="true" />
-            <option label="No" value="false" />
+            <option label={attributes.coed[1]} value="true" />
+            <option label={attributes.coed[0]} value="false" />
           </Select>
         </FormControl>
 

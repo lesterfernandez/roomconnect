@@ -1,32 +1,46 @@
-import { Box, Text, Flex } from "@chakra-ui/react";
+import { Heading, HStack, Box } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
+import { IoHome } from "react-icons/io5";
 
 export default function Navbar() {
   return (
-    <Box bg="#01293f" pos="relative">
-      <Flex p="5" gap="40px" m="0px 40px">
-        <NavLink to="/">
-          {({ isActive }) => (
-            <Text color={isActive ? "#fca95a" : "white"} fontSize="xl">
-              Search
-            </Text>
-          )}
-        </NavLink>
-        <NavLink to="/profile">
-          {({ isActive }) => (
-            <Text color={isActive ? "#fca95a" : "white"} fontSize="xl">
-              Profile
-            </Text>
-          )}
-        </NavLink>
-        <NavLink to="/chat">
-          {({ isActive }) => (
-            <Text color={isActive ? "#fca95a" : "white"} fontSize="xl">
-              Chat
-            </Text>
-          )}
-        </NavLink>
-      </Flex>
-    </Box>
+    <HStack
+      bg="#01293f"
+      gap="8"
+      py="4"
+      px={{ base: "8", sm: "12" }}
+      justify={{ base: "center", sm: "initial" }}
+    >
+      <HStack gap="2" mr={{ sm: "auto" }}>
+        <Heading color="white" size="md" display={{ base: "none", sm: "initial" }}>
+          RoomConnect
+        </Heading>
+        <Box>
+          <IoHome color="white" />
+        </Box>
+      </HStack>
+
+      <NavLink to="/">
+        {({ isActive }) => (
+          <Heading color={isActive ? "#fca95a" : "white"} size="md">
+            Search
+          </Heading>
+        )}
+      </NavLink>
+      <NavLink to="/profile">
+        {({ isActive }) => (
+          <Heading color={isActive ? "#fca95a" : "white"} size="md">
+            Profile
+          </Heading>
+        )}
+      </NavLink>
+      <NavLink to="/chat">
+        {({ isActive }) => (
+          <Heading color={isActive ? "#fca95a" : "white"} size="md">
+            Chat
+          </Heading>
+        )}
+      </NavLink>
+    </HStack>
   );
 }

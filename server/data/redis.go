@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -11,8 +10,8 @@ import (
 var redisClient *redis.Client
 
 func ConnectRedis() {
-	host := os.Getenv("REDIS_HOST")
-	port := os.Getenv("REDIS_PORT")
+	host := GetenvWithFallback("REDIS_HOST", "localhost")
+	port := GetenvWithFallback("REDIS_PORT", "5002")
 
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", host, port),

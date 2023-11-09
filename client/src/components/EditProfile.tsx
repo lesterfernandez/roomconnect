@@ -68,9 +68,11 @@ export default function EditProfile() {
           <FormLabel>Gender</FormLabel>
           <Select value={userProfile.gender} onChange={handleChange("gender")}>
             <option value="" disabled />
-            {Object.values(attributes.gender).map(option => {
-              return <option value={option}>{option}</option>;
-            })}
+            {Object.values(attributes.gender).map((option, i) => (
+              <option value={option} key={`edit-gender-${i}`}>
+                {option}
+              </option>
+            ))}
           </Select>
         </FormControl>
 

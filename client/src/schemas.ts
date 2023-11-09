@@ -41,6 +41,7 @@ export const serverEventSchema = z
     type: z.literal("message"),
     from: z.string(),
     content: z.string(),
+    to: z.string(),
   })
   .or(
     z.object({

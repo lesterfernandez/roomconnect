@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Message } from "../types";
 
-type MessageStore = {
+export type MessageStore = {
   [name: string]: Message[] | undefined;
 };
 

@@ -20,6 +20,7 @@ import { registerUser } from "../../api/auth";
 import { registerBodySchema } from "../../schemas";
 import { setToken } from "../../token";
 import SegmentedControl from "../ui/SegmentedControl";
+import attributes from "../../attribute-text";
 
 const Register = () => {
   const [registerBody, setRegisterBody] = useState<RegisterBody>({
@@ -122,16 +123,15 @@ const Register = () => {
             onChange={event => setRegisterBody({ ...registerBody, gender: event.target.value })}
           >
             <option value="" disabled />
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-            <option value="Prefer Not To Say">Prefer Not To Say</option>
+            {Object.values(attributes.gender).map(option => {
+              return <option value={option}>{option}</option>;
+            })}
           </Select>
         </FormControl>
 
         <SegmentedControl
           controlLabel="Budget"
-          labels={["<1000", "1000-2000", "2000+"]}
+          labels={attributes.budget}
           activeIndex={registerBody.budget - 1}
           onChange={i =>
             setRegisterBody({ ...registerBody, budget: (i + 1) as RegisterBody["budget"] })
@@ -140,7 +140,7 @@ const Register = () => {
 
         <SegmentedControl
           controlLabel="Cleanliness"
-          labels={["Messy", "Average", "Super Clean"]}
+          labels={attributes.cleanliness}
           activeIndex={registerBody.cleanliness - 1}
           onChange={i =>
             setRegisterBody({
@@ -152,7 +152,7 @@ const Register = () => {
 
         <SegmentedControl
           controlLabel="Loudness"
-          labels={["Quiet", "Average", "Party Animal"]}
+          labels={attributes.loudness}
           activeIndex={registerBody.loudness - 1}
           onChange={i =>
             setRegisterBody({ ...registerBody, loudness: (i + 1) as RegisterBody["loudness"] })

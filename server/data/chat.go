@@ -53,7 +53,7 @@ func SendMessage(msg ChatMessage) error {
 	// Store message
 	storeErr := storeMessage(msg)
 	if storeErr != nil {
-		fmt.Println("Error storing message:", msg)
+		fmt.Println("Error storing message:", msg, "err:", storeErr)
 		return storeErr
 	}
 

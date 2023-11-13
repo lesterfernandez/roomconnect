@@ -36,16 +36,16 @@ export const messageSchema = z.object({
   content: z.string().min(1),
 });
 
-export const serverEventSchema = z
-  .object({
-    type: z.literal("message"),
-    from: z.string(),
-    content: z.string(),
-    to: z.string(),
+export const serverMessageSchema = z.object({
+  type: z.literal("message"),
+  from: z.string(),
+  content: z.string(),
+  to: z.string(),
+});
+
+export const serverEventSchema = serverMessageSchema.or(
+  z.object({
+    type: z.literal("load"),
+    conversations: z.array(messageSchema),
   })
-  .or(
-    z.object({
-      type: z.literal("load"),
-      conversations: z.array(messageSchema),
-    })
-  );
+);

@@ -17,7 +17,7 @@ func CreateHandler(s *Server) http.Handler {
 	r := chi.NewRouter()
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"POST", "PUT", "GET"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},

@@ -26,10 +26,11 @@ function handleReceivedMessage(message: Message) {
 }
 
 function handleChat(event: MessageEvent) {
-  const parsedMessage = serverEventSchema.safeParse(event.data);
+  const data = JSON.parse(event.data);
+  const parsedMessage = serverEventSchema.safeParse(data);
 
   if (!parsedMessage.success) {
-    alert("Error");
+    console.log(parsedMessage.error, data);
     return;
   }
 
@@ -52,10 +53,14 @@ function handleChat(event: MessageEvent) {
 export default function useChatSetup() {
   const socketRef = useRef<WebSocket | null>(null);
   useEffect(() => {
-    socketRef.current = new WebSocket(import.meta.env.VITE_SOCKET_URL + "?token=" + getToken());
+    console.log("running chat setup");
+    socketRef.current = new WebSocket(
+      import.meta.env.VITE_SOCKET_URL + "?token=" + encodeURIComponent(getToken() ?? "")
+    );
     socketRef.current.addEventListener("message", handleChat);
 
     return () => {
+      console.log("running chat teardown");
       socketRef.current?.removeEventListener("message", handleChat);
       socketRef.current?.close();
     };

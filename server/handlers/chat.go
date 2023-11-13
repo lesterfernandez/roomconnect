@@ -13,10 +13,15 @@ import (
 
 func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 
-	upgrader := websocket.Upgrader{}
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println("Error upgrading connection", err)
+		return
 	}
 	defer conn.Close()
 
@@ -37,7 +42,7 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 
 		if err := conn.ReadJSON(&chatMessage); err != nil {
 			fmt.Println("Bad Request,", err)
-			continue
+			break
 		}
 
 		if verifyErr := verifyMessage(&chatMessage, subject); verifyErr != nil {

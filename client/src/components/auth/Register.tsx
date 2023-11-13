@@ -123,8 +123,12 @@ const Register = () => {
             onChange={event => setRegisterBody({ ...registerBody, gender: event.target.value })}
           >
             <option value="" disabled />
-            {Object.values(attributes.gender).map(option => {
-              return <option value={option}>{option}</option>;
+            {Object.values(attributes.gender).map((option, index) => {
+              return (
+                <option value={option} key={`option_${index}`}>
+                  {option}
+                </option>
+              );
             })}
           </Select>
         </FormControl>

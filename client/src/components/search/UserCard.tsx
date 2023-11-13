@@ -11,8 +11,20 @@ import {
 } from "@chakra-ui/react";
 import type { UserProfile } from "../../types";
 import attributes from "../../attribute-text";
+import { useMessageStore } from "../../store/message";
+import { useNavigate } from "react-router-dom";
 
 export default function UserCard(props: { profile: UserProfile }) {
+  const navigate = useNavigate();
+  const messages = useMessageStore();
+
+  const handleChatNav = () => {
+    if (!messages[props.profile.username])
+      useMessageStore.setState({ [props.profile.username]: [] });
+
+    navigate(`/chat/${props.profile.username}`);
+  };
+
   return (
     <Card direction={{ base: "column", sm: "row" }} p="2" gap={2} variant="outline">
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">
@@ -44,7 +56,13 @@ export default function UserCard(props: { profile: UserProfile }) {
             </WrapItem>
           </Wrap>
         </Box>
-        <Button colorScheme="orange" ml="auto" mt="auto" minW={{ base: "100%", sm: "5rem" }}>
+        <Button
+          colorScheme="orange"
+          ml="auto"
+          mt="auto"
+          minW={{ base: "100%", sm: "5rem" }}
+          onClick={handleChatNav}
+        >
           Chat
         </Button>
       </CardBody>

@@ -8,6 +8,9 @@ services:
       - ./db/seeding.sql:/docker-entrypoint-initdb.d/seeding.sql
     ports:
       - "5001:5432"
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=secret
 
   cache:
     container_name: docker-rmf-cache

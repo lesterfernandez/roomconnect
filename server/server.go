@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/joho/godotenv"
@@ -10,26 +9,18 @@ import (
 	"github.com/lesterfernandez/roommate-finder/server/handlers"
 )
 
-func loadEnv() error {
-	if dotEnvErr := godotenv.Load(); dotEnvErr == nil {
-		return dotEnvErr
-	}
-
-	return godotenv.Load(".env.template")
-}
-
 func main() {
-	envErr := loadEnv()
-	if envErr != nil {
-		log.Fatal(".env and .env.template files not found!")
-	}
+	godotenv.Load(".env")
 
 	s := handlers.Server{User: data.NewUserRepo()}
 
 	customHandler := handlers.CreateHandler(&s)
 
-	data.Connect()
-	defer data.Close()
+	data.ConnectDatabase()
+	defer data.CloseDatabase()
+
+	data.ConnectRedis()
+	defer data.CloseRedis()
 
 	fmt.Println("Server started on Port 3000")
 	http.ListenAndServe(":3000", customHandler)

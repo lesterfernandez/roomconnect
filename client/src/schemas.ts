@@ -29,3 +29,23 @@ export const userCredentialsSchema = z.object({
 });
 
 export const registerBodySchema = userProfileSchema.and(userCredentialsSchema);
+
+export const messageSchema = z.object({
+  from: z.string().min(1),
+  to: z.string().min(1),
+  content: z.string().min(1),
+});
+
+export const serverEventSchema = z
+  .object({
+    type: z.literal("message"),
+    from: z.string(),
+    content: z.string(),
+    to: z.string(),
+  })
+  .or(
+    z.object({
+      type: z.literal("load"),
+      conversations: z.array(messageSchema),
+    })
+  );

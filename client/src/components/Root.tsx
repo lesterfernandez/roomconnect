@@ -36,7 +36,7 @@ const Root = () => {
   return (
     <Suspense
       fallback={
-        <Box bg="#156087" display="flex" minH="100vh">
+        <Box display="flex" minH="100vh">
           <CircularProgress isIndeterminate color="orange" m="auto" />
         </Box>
       }

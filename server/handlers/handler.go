@@ -18,6 +18,7 @@ func CreateHandler(s *Server) http.Handler {
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"POST", "PUT", "GET"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"*"},
 	})
@@ -33,8 +34,14 @@ func CreateHandler(s *Server) http.Handler {
 
 		// Authenticated routes
 		r.Get("/search", s.searchUsers)
-		r.Get("/chat", s.handleChat)
 		r.Put("/profile", s.editProfile)
+	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(AuthenticateWS)
+
+		r.Get("/chat", s.handleChat)
+
 	})
 
 	return r

@@ -1,6 +1,5 @@
 import {
   Card,
-  Stack,
   CardBody,
   Heading,
   Tag,
@@ -20,34 +19,35 @@ export default function UserCard(props: { profile: UserProfile }) {
         <Avatar mx="auto" size="xl" src={props.profile.profilePic} />
       </Box>
 
-      <Stack>
-        <CardBody px="0">
-          <Heading size="md" mb={2}>
-            {props.profile.displayName}
-          </Heading>
+      <CardBody px="0" display="flex" flexDir={{ base: "column", sm: "row" }} gap="2">
+        <Box
+          display={{ base: "initial", sm: "flex" }}
+          flexDir="column"
+          justifyContent="space-around"
+        >
+          <Heading size="md">{props.profile.displayName}</Heading>
           <Wrap gap={2}>
             <WrapItem>
-              <Tag>Gender: {props.profile.gender}</Tag>
+              <Tag>Gender: {attributes.gender[props.profile.gender.toLowerCase()]}</Tag>
             </WrapItem>
             <WrapItem>
-              <Tag>Budget: {attributes.budget[props.profile.budget]}</Tag>
+              <Tag>Budget: {attributes.budget[props.profile.budget - 1]}</Tag>
             </WrapItem>
             <WrapItem>
-              <Tag>Loudness: {attributes.loudness[props.profile.loudness]}</Tag>
+              <Tag>Loudness: {attributes.loudness[props.profile.loudness - 1]}</Tag>
             </WrapItem>
             <WrapItem>
-              <Tag>Cleanliness: {attributes.cleanliness[props.profile.cleanliness]}</Tag>
+              <Tag>Cleanliness: {attributes.cleanliness[props.profile.cleanliness - 1]}</Tag>
             </WrapItem>
             <WrapItem>
               <Tag>Co-Ed: {attributes.coed[+props.profile.coed]}</Tag>
             </WrapItem>
           </Wrap>
-        </CardBody>
-      </Stack>
-
-      <Button colorScheme="orange" ml="auto" mt="auto" minW={{ base: "100%", sm: "5rem" }}>
-        Chat
-      </Button>
+        </Box>
+        <Button colorScheme="orange" ml="auto" mt="auto" minW={{ base: "100%", sm: "5rem" }}>
+          Chat
+        </Button>
+      </CardBody>
     </Card>
   );
 }

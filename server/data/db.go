@@ -19,7 +19,7 @@ func GetenvWithFallback(key string, fallback string) string {
 }
 
 func ConnectDatabase() {
-	name := GetenvWithFallback("POSTGRES_DB", "rmf-db1")
+	name := GetenvWithFallback("POSTGRES_DB", "db")
 	password := GetenvWithFallback("POSTGRES_PASSWORD", "secret")
 	host := GetenvWithFallback("POSTGRES_HOST", "localhost")
 	port := GetenvWithFallback("POSTGRES_PORT", "5001")

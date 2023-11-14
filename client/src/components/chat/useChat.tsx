@@ -1,17 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { serverEventSchema } from "../../schemas";
 import { useMessageStore } from "../../store/message";
 import type { MessageStore } from "../../store/message";
 import type { Message } from "../../types";
 import { getToken } from "../../token";
 import { useRef } from "react";
+import { useProfileStore } from "../../store/user";
+import { sendMessage } from "../../api/chat";
 
 function handleLoadMessages(conversations: Message[]) {
   const messages: MessageStore = {};
-  for (const msg of conversations) {
-    messages[msg.from] = messages[msg.from] ?? [];
-    messages[msg.from]?.push(msg);
+  const { username } = useProfileStore.getState();
+
+  for (let i = conversations.length - 1; i >= 0; i--) {
+    const msg = conversations[i];
+    const other = msg.from === username ? msg.to : msg.from;
+    if (!messages[other]) messages[other] = [];
+    messages[other]?.push(msg);
   }
+
   useMessageStore.setState(messages);
 }
 
@@ -52,13 +59,14 @@ function handleChat(event: MessageEvent) {
 
 export default function useChatSetup() {
   const socketRef = useRef<WebSocket | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     console.log("running chat setup");
-    socketRef.current = new WebSocket(
-      import.meta.env.VITE_SOCKET_URL + "?token=" + encodeURIComponent(getToken() ?? "")
-    );
+    const url = import.meta.env.VITE_SOCKET_URL + "?token=" + encodeURIComponent(getToken() ?? "");
+    socketRef.current = new WebSocket(url);
+    socketRef.current.onopen = () => setLoading(false);
     socketRef.current.addEventListener("message", handleChat);
-
     return () => {
       console.log("running chat teardown");
       socketRef.current?.removeEventListener("message", handleChat);
@@ -68,15 +76,12 @@ export default function useChatSetup() {
 
   return {
     handleSendMessage: (message: Message) => {
-      useMessageStore.setState(current => {
-        const oldMessages = current[message.to] ?? [];
-        return {
-          ...current,
-          [message.to]: [...oldMessages, message],
-        };
-      });
-
-      socketRef.current?.send(JSON.stringify(message));
+      if (!socketRef.current) {
+        console.error(`Tried to send message ${message} while WS is null`);
+        return;
+      }
+      sendMessage(socketRef.current, message);
     },
+    loading,
   };
 }

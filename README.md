@@ -7,7 +7,6 @@
 [![Vite](https://img.shields.io/badge/Vite-4.4.5-purple?logo=vite&labelColor=purple&color=yellow)]()
 [![Redis](https://img.shields.io/badge/Redis-white?logo=redis)]()
 [![Docker](https://img.shields.io/badge/Docker-blue?logo=docker&labelColor=white&color=blue)]()
-[![SQL](https://img.shields.io/badge/SQL-orange?logo=sqlite&labelColor=orange&color=orange)]()
 [![npm](https://img.shields.io/badge/npm-10.2.3-green?logo=npm&labelColor=grey&color=green)]()
 
 <h2>Overview</h2>

@@ -6,7 +6,9 @@ export default function LandingPage() {
   return (
     <ChakraProvider>
       <Flex justifyContent="flex-end" p={4}>
-        <Button borderRadius="20px">Login</Button>
+        <Link href="/login" style={{ textDecoration: "none" }}>
+          <Button borderRadius="20px">Login</Button>
+        </Link>
       </Flex>
       <Flex
         direction={{ base: "column", md: "row" }}
@@ -36,7 +38,7 @@ export default function LandingPage() {
             <br />
             Miami
           </Text>
-          <Link href="/login" style={{ textDecoration: "none" }}>
+          <Link href="/register" style={{ textDecoration: "none" }}>
             <Button colorScheme="orange" borderRadius="20px" size="lg">
               Get Started
             </Button>

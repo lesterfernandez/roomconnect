@@ -98,7 +98,6 @@ func loadMessages(conn *websocket.Conn, username string) {
 		FROM messages
 		WHERE to_user=$1 OR from_user=$1
 		ORDER BY created_date DESC
-		LIMIT 50;
 		`
 
 	rows, err := pool.Query(context.Background(), sqlQuery, &username)

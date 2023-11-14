@@ -4,18 +4,19 @@ import { HStack, VStack, StackDivider, Text, Button, Center, Box } from "@chakra
 import { useMessageStore } from "../../store/message";
 import useChatSetup from "./useChat";
 import { createContext } from "react";
-import type { Message } from "../../types";
+import Loading from "../ui/Loading";
 
-type ChatContextType = { handleSendMessage: (message: Message) => void };
-
+type ChatContextType = ReturnType<typeof useChatSetup>;
 export const ChatContext = createContext<ChatContextType>({} as ChatContextType);
 
 export default function Chat() {
   const messages = useMessageStore();
+  const chat = useChatSetup();
 
-  const { handleSendMessage } = useChatSetup();
+  if (Object.keys(messages).length === 0 && chat.loading) return <Loading />;
+
   return (
-    <ChatContext.Provider value={{ handleSendMessage }}>
+    <ChatContext.Provider value={chat}>
       {Object.keys(messages).length ? (
         <HStack h="full" gap="0">
           <VStack

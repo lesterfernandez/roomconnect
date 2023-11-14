@@ -8,7 +8,6 @@
 [![Docker](https://img.shields.io/badge/Docker-blue?logo=docker&labelColor=white&color=blue)]()
 [![SQL](https://img.shields.io/badge/SQL-orange?logo=sqlite&labelColor=orange&color=orange)]()
 [![npm](https://img.shields.io/badge/npm-10.2.3-green?logo=npm&labelColor=grey&color=green)]()
-[![Prettier](https://img.shields.io/badge/Prettier-3.0.3-grey?logo=prettier&labelColor=grey&color=pink)]()
-[![ESLint](https://img.shields.io/badge/ESLint-8.45.0-grey?logo=eslint&labelColor=grey&color=grey)]()
+
 
 

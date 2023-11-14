@@ -5,13 +5,19 @@ import type { MessageStore } from "../../store/message";
 import type { Message } from "../../types";
 import { getToken } from "../../token";
 import { useRef } from "react";
+import { useProfileStore } from "../../store/user";
 
 function handleLoadMessages(conversations: Message[]) {
   const messages: MessageStore = {};
-  for (const msg of conversations) {
-    messages[msg.from] = messages[msg.from] ?? [];
-    messages[msg.from]?.push(msg);
+  const { username } = useProfileStore.getState();
+
+  for (let i = conversations.length - 1; i >= 0; i--) {
+    const msg = conversations[i];
+    const other = msg.from === username ? msg.to : msg.from;
+    if (!messages[other]) messages[other] = [];
+    messages[other]?.push(msg);
   }
+
   useMessageStore.setState(messages);
 }
 

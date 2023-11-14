@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { Await, useLoaderData, Outlet, Navigate, defer } from "react-router-dom";
-import { Box, CircularProgress } from "@chakra-ui/react";
 import Layout from "./ui/Layout.tsx";
 import { userProfileSchema } from "../schemas.ts";
 import { getToken } from "../token.ts";
 import { useProfileStore } from "../store/user.ts";
+import Loading from "./ui/Loading.tsx";
 
 const handleImplicitLogin = async (): Promise<null> => {
   const profile = useProfileStore.getState();
@@ -34,13 +34,7 @@ const Root = () => {
   const data = useLoaderData() as { response: ReturnType<typeof handleImplicitLogin> };
 
   return (
-    <Suspense
-      fallback={
-        <Box display="flex" minH="100vh">
-          <CircularProgress isIndeterminate color="orange" m="auto" />
-        </Box>
-      }
-    >
+    <Suspense fallback={<Loading />}>
       <Await resolve={data.response} errorElement={<Navigate to="/login" />}>
         {() => (
           <Layout>

@@ -16,38 +16,46 @@
 
 - Lead Engineer: Lester Fernandez
 - Front-End Engineers:
-    - Jocelyn Dzuong - Design + UI 
-    - Firas Natour - Design + UI
-    - Javier Garcia - Frontend Infrastructure
+  - Jocelyn Dzuong - Design + UI
+  - Firas Natour - Design + UI
+  - Javier Garcia - Frontend Infrastructure
 - Back-End Engineers:
-    - Enzo Falone - Backend Infrastructure + API
-    - Jordan Diaz - Security + API
- 
+  - Enzo Falone - Backend Infrastructure + API
+  - Jordan Diaz - Security + API
+
 <h2>How to Build</h2>
 <p>To build this project, make sure you have npm, Docker, and Go installed. Then run the following steps:</p>
 
 1. Clone the repository to your directory
+
 ```
 git clone https://github.com/lesterfernandez/roomconnect.git
 ```
+
 3. Install all necessary dependencies and packages in the root of the project
+
 ```
 cd roommate-finder
 npm install
 ```
+
 4. Start the docker image inside `/server`
+
 ```
  cd server
  docker compose up -d
 ```
+
 5. Start the go server inside the same directory
+
 ```
 go run server.go
 ```
+
 6. Build the project in `/client` and open the link locally in your browser
+
 ```
 cd ..
 cd client
 npm run dev
 ```
-

@@ -35,7 +35,7 @@ const Root = () => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <Await resolve={data.response} errorElement={<Navigate to="/login" />}>
+      <Await resolve={data.response} errorElement={<Navigate to="/landing" />}>
         {() => (
           <Layout>
             <Outlet />

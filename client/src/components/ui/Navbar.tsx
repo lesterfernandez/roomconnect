@@ -20,7 +20,7 @@ export default function Navbar() {
         </Box>
       </HStack>
 
-      <NavLink to="/">
+      <NavLink to="/search">
         {({ isActive }) => (
           <Heading color={isActive ? "#fca95a" : "white"} size="md">
             Search

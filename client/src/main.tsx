@@ -20,13 +20,14 @@ const router = createBrowserRouter([
     loader: rootLoader,
     element: <Root />,
     shouldRevalidate: () => false,
+    errorElement: <NotFound />,
     children: [
       {
         path: "profile",
         element: <EditProfile />,
       },
       {
-        index: true,
+        path: "search",
         element: <Search />,
       },
       {
@@ -40,7 +41,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-    errorElement: <NotFound />,
   },
   {
     path: "/login",

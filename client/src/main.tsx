@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         element: <EditProfile />,
       },
       {
-        path: "search",
+        index: true,
         element: <Search />,
       },
       {

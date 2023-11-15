@@ -20,7 +20,7 @@ export default function LandingPage() {
           </Link>
         </Box>
         <VStack
-          align="left" // Center align VStack items
+          align="left"
           spacing={4}
           pt={{ base: "1em", md: "2.5em" }}
         >

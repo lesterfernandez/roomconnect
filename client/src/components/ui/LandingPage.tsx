@@ -7,11 +7,11 @@ export default function LandingPage() {
     <ChakraProvider>
       <Flex
         direction={{ base: "column", md: "row" }}
-        justify={{ base: "center", md: "center" }} // Center the content for medium and larger screens
-        align="center" // Center align the content vertically
+        justify={{ base: "center", md: "center" }} 
+        align="center" 
         bgGradient="linear(to-b, #00293F, 55%, #D3DEE1)"
         height="100vh"
-        position="relative" // Added for absolute positioning of the login button
+        position="relative" 
         p={4}
       >
         <Box position="absolute" top={4} right={4}>

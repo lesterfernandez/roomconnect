@@ -1,6 +1,6 @@
 import { ChakraProvider, VStack, Text, Box, Image, Flex, Button, Link } from "@chakra-ui/react";
-import "css/LandingPage.css";
-import "assets/palm-tree-3d.png";
+import "./css/LandingPage.css";
+import img from "./assets/palm-tree-3d.png";
 
 export default function LandingPage() {
   return (
@@ -45,7 +45,7 @@ export default function LandingPage() {
           </Link>
         </VStack>
         <Box display={{ base: "none", md: "block" }} alignSelf="flex-end" pr="20">
-          <Image src="assets/palm-tree-3d.png" boxSize="sm" />
+          <Image src={img} boxSize="sm" />
         </Box>
       </Flex>
     </ChakraProvider>

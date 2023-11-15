@@ -5,27 +5,27 @@ import img from "./assets/palm-tree-3d.png";
 export default function LandingPage() {
   return (
     <ChakraProvider>
-      <Flex justifyContent="flex-end" p={4}>
-        <Link href="/login" style={{ textDecoration: "none" }}>
-          <Button borderRadius="20px">Login</Button>
-        </Link>
-      </Flex>
       <Flex
         direction={{ base: "column", md: "row" }}
-        justify="space-between"
-        align={{ base: "center", md: "flex-start" }}
-        p={4}
+        justify={{ base: "center", md: "center" }} 
+        align="center" 
         bgGradient="linear(to-b, #00293F, 55%, #D3DEE1)"
         height="100vh"
+        position="relative" 
+        p={4}
       >
+        <Box position="absolute" top={4} right={4}>
+          <Link href="/login" style={{ textDecoration: "none" }}>
+            <Button borderRadius="20px">Login</Button>
+          </Link>
+        </Box>
         <VStack
-          align="start"
+          align="left"
           spacing={4}
-          pl={{ base: "1em", md: "2em" }}
           pt={{ base: "1em", md: "2.5em" }}
         >
           <Text
-            fontSize="2.5em"
+            fontSize="3.0em"
             textAlign="left"
             lineHeight="1.2"
             color="white"
@@ -44,7 +44,7 @@ export default function LandingPage() {
             </Button>
           </Link>
         </VStack>
-        <Box display={{ base: "none", md: "block" }} alignSelf="flex-end" pr="20">
+        <Box top={30} display={{ base: "none", md: "block" }} alignSelf="flex-end" pr="15">
           <Image src={img} boxSize="sm" />
         </Box>
       </Flex>

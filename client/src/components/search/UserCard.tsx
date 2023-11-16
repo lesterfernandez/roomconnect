@@ -28,7 +28,12 @@ export default function UserCard(props: { profile: UserProfile }) {
   return (
     <Card direction={{ base: "column", sm: "row" }} p="2" gap={2} variant="outline">
       <Box margin="20px" display="flex" justifyContent="center" alignItems="center">
-        <Avatar mx="auto" size="xl" src={props.profile.profilePic} />
+        <Avatar
+          mx="auto"
+          size="xl"
+          key={`${props.profile.username}-img`}
+          src={props.profile.profilePic}
+        />
       </Box>
 
       <CardBody px="0" display="flex" flexDir={{ base: "column", sm: "row" }} gap="2">

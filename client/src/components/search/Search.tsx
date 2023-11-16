@@ -25,9 +25,9 @@ const handleSearch = async (settings: Partial<SearchBody>) => {
 };
 
 const handleChange = (name: keyof SearchBody) => (e: React.ChangeEvent<HTMLSelectElement>) => {
-  useSearchStore.setState({
-    settings: { [name]: e.target.value },
-  });
+  useSearchStore.setState(prev => ({
+    settings: { ...prev.settings, [name]: e.target.value },
+  }));
 };
 
 export default function Search() {

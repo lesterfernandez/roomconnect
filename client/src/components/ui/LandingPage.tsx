@@ -1,6 +1,7 @@
-import { ChakraProvider, VStack, Text, Box, Image, Flex, Button, Link } from "@chakra-ui/react";
+import { ChakraProvider, VStack, Text, Box, Image, Flex, Button } from "@chakra-ui/react";
 import "./css/LandingPage.css";
 import img from "./assets/palm-tree-3d.png";
+import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   return (
@@ -16,7 +17,7 @@ export default function LandingPage() {
           p={4}
         >
           <Box position="absolute" top={4} right={4}>
-            <Link href="/login" style={{ textDecoration: "none" }}>
+            <Link to="/login" style={{ textDecoration: "none" }}>
               <Button>Login</Button>
             </Link>
           </Box>
@@ -35,7 +36,7 @@ export default function LandingPage() {
               <br />
               Miami
             </Text>
-            <Link href="/register" style={{ textDecoration: "none" }}>
+            <Link to="/register" style={{ textDecoration: "none" }}>
               <Button colorScheme="orange" size="lg">
                 Get Started
               </Button>

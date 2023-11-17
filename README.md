@@ -11,7 +11,7 @@
 
 ## Overview
 
-RoomConnect is a full stack TypeScript + Go web app that helps find compatible roommates throughout Miami-Dade county. It allows users to customize their profile, preferences, and search for other potential roommates through queries. Furthermore, RoommateConnect allows potential roommates to chat with each other in real-time.
+RoomConnect is a full-stack TypeScript + Go web app that helps users find compatible roommates throughout Miami. It allows users to customize their profile and preferences, and search for other potential roommates through dynamic searcg querires. Furthermore, RoomConnect allows potential roommates to chat with each other in real time.
 
 ## Contributors
 

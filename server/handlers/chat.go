@@ -1,23 +1,47 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"errors"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
 	"github.com/lesterfernandez/roommate-finder/server/data"
 )
 
-func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
-	upgrader := websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
+func handleMessage(username string, p []byte) bool {
+	message := data.ChatMessage{Type: "message"}
+	err := json.Unmarshal(p, &message)
+
+	if err != nil {
+		fmt.Println("invalid chat message:", err)
+		return false
 	}
+
+	if message.From != username {
+		fmt.Println("incoming ChatMessage \"from\" field does not match username")
+		return false
+	}
+
+	data.SendMessage(message)
+	return true
+}
+
+func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
+	verifiedToken := r.Context().Value(ContextKey).(*jwt.Token)
+	subject, tokenErr := verifiedToken.Claims.GetSubject()
+	if tokenErr != nil {
+		respondWithError(w, "Invalid Token", http.StatusUnauthorized)
+		return
+	}
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println("Error upgrading connection", err)
@@ -25,39 +49,25 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	// Read token payload with username
-	verifiedToken := r.Context().Value(ContextKey).(*jwt.Token)
-
-	subject, tokenErr := verifiedToken.Claims.GetSubject()
-	if tokenErr != nil {
-		respondWithError(w, "Invalid Token", http.StatusUnauthorized)
-		return
-	}
-
-	// Subscribe to Redis channel and receive messages for user
 	go data.JoinChannel(conn, subject)
 
 	for {
-		chatMessage := data.ChatMessage{Type: "message"}
-
-		if err := conn.ReadJSON(&chatMessage); err != nil {
-			fmt.Println("Bad Request,", err)
+		_, p, err := conn.ReadMessage()
+		if err != nil {
+			fmt.Println("Error reading WS message", err)
 			break
 		}
 
-		if verifyErr := verifyMessage(&chatMessage, subject); verifyErr != nil {
-			fmt.Println(verifyErr)
+		if handleMessage(subject, p) {
 			continue
 		}
 
-		data.SendMessage(chatMessage)
-	}
-}
+		if string(p) == "PING" {
+			conn.WriteMessage(websocket.TextMessage, []byte("PONG"))
+			continue
+		}
 
-func verifyMessage(message *data.ChatMessage, username string) error {
-	if message.From != username {
-		return errors.New("incoming ChatMessage \"from\" field does not match username")
+		fmt.Println("Unsupported message", string(p))
+		break
 	}
-
-	return nil
 }

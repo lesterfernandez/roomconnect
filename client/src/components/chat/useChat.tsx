@@ -32,7 +32,9 @@ function handleReceivedMessage(message: Message) {
   });
 }
 
-function handleChat(event: MessageEvent) {
+function handleMessage(event: MessageEvent) {
+  if (event.data === "PONG") return;
+
   const data = JSON.parse(event.data);
   const parsedMessage = serverEventSchema.safeParse(data);
 
@@ -63,13 +65,21 @@ export default function useChatSetup() {
 
   useEffect(() => {
     console.log("running chat setup");
+
     const url = import.meta.env.VITE_SOCKET_URL + "?token=" + encodeURIComponent(getToken() ?? "");
     socketRef.current = new WebSocket(url);
+
     socketRef.current.onopen = () => setLoading(false);
-    socketRef.current.addEventListener("message", handleChat);
+    socketRef.current.addEventListener("message", handleMessage);
+    const intervalId = setInterval(() => {
+      socketRef.current?.send("PING");
+    }, 1000 * 15);
+
     return () => {
       console.log("running chat teardown");
-      socketRef.current?.removeEventListener("message", handleChat);
+
+      socketRef.current?.removeEventListener("message", handleMessage);
+      clearInterval(intervalId);
       socketRef.current?.close();
     };
   }, []);
